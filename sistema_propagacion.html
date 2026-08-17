@@ -896,7 +896,7 @@ function setConn(){
   const n=contarPend();
   if(n){ p.style.display=''; p.className='pill off'; p.textContent=n+' cambio(s) sin subir'; } else p.style.display='none';
 }
-let flushT=null;
+let flushT=null, ultimoPend=0;
 function flush(){ clearTimeout(flushT); flushT=setTimeout(doFlush,500); }
 function serEnsV(e){ return Object.assign({},e,{tratamientos:JSON.stringify(e.tratamientos||[]),
   criterios:JSON.stringify(e.criterios||[]),revisiones:JSON.stringify(e.revisiones||[])}); }
@@ -940,8 +940,8 @@ function logEvent(tipo,punto,detalle,modulo){
   data.log.unshift(l); if(data.log.length>900) data.log.length=900;
   pend.log.push(l); guardarLocal(); flush();
 }
-const sucioPunto=id=>{ pend.pts[id]=true; guardarLocal(); setConn(); flush(); };
-const sucioLote=id=>{ pend.lotes[id]=true; guardarLocal(); setConn(); flush(); };
+const sucioPunto=id=>{ pend.pts[id]=true; ultimoPend=Date.now(); guardarLocal(); setConn(); flush(); };
+const sucioLote=id=>{ pend.lotes[id]=true; ultimoPend=Date.now(); guardarLocal(); setConn(); flush(); };
 
 function parseEnsVivero(arr){
   return (arr||[]).map(e=>{ const o=Object.assign({},e);
@@ -964,6 +964,14 @@ function sembrarFaltantes(){
   const nuevos=[];
   surcoNums().forEach(s=>{ for(let p=1;p<=ptsDe(s);p++){ const id=pkey(s,p);
     if(!data.puntos[id]){ data.puntos[id]={estado:'viva',fecha:'',sembrada:false,resiembras:0,
+      resiembrasFechas:[],cosechas:[],ensayo:'',grupo:'',nota:'',hist:[]}; nuevos.push(id); } }});
+  return nuevos;
+}
+/* igual, pero los puntos nuevos nacen VACÍOS (para no inventar plantas al importar) */
+function sembrarFaltantesVacios(){
+  const nuevos=[];
+  surcoNums().forEach(s=>{ for(let p=1;p<=ptsDe(s);p++){ const id=pkey(s,p);
+    if(!data.puntos[id]){ data.puntos[id]={estado:'vacia',fecha:'',sembrada:false,resiembras:0,
       resiembrasFechas:[],cosechas:[],ensayo:'',grupo:'',nota:'',hist:[]}; nuevos.push(id); } }});
   return nuevos;
 }
@@ -991,11 +999,15 @@ async function load(){
   renderAll(); setConn(); flush();
   if(USE_SHEET) setInterval(refrescar, REFRESH_SEG*1000);
 }
+let importando=false;
 async function refrescar(){
-  if(!USE_SHEET||!navigator.onLine||flushing) return;
+  if(!USE_SHEET||!navigator.onLine||flushing||importando) return;
   if(hayPend()){ flush(); return; }
+  // segunda barrera: no traer del servidor si en los últimos 8 s hubo algo pendiente
+  if(Date.now()-ultimoPend < 8000){ return; }
   try{
     const srv=await sheet.load();
+    if(hayPend()||importando) return;   // por si algo entró mientras cargaba
     if(srv.cfg){ let c=srv.cfg; if(typeof c==='string'){ try{c=JSON.parse(c);}catch(x){c=null;} }
       if(c){ cfg=migrarCfg(Object.assign(configDefecto(),c)); buildIndex(); aplicarApariencia(); } }
     data.lotes=srv.lotes||[]; data.ensVivero=parseEnsVivero(srv.ensVivero);
@@ -1912,7 +1924,7 @@ document.getElementById('file-import').addEventListener('change',e=>{
       else if(o.data&&o.data.points){                                 // copia de la versión anterior de Inv. 6
         nuevos={lotes:data.lotes,ensVivero:data.ensVivero,puntos:{},ensCampo:[],log:o.data.log||[]};
         Object.keys(o.data.points).forEach(id=>{ const p=o.data.points[id];
-          nuevos.puntos[id]={estado:p.estado||'viva',fecha:p.fecha||'',sembrada:!!(p.sembrada||p.fecha),
+          nuevos.puntos[id]={estado:p.estado||'vacia',fecha:p.fecha||'',sembrada:!!(p.sembrada||p.fecha),
             resiembras:p.resiembras||0,resiembrasFechas:p.resiembrasFechas||[],cosechas:[],
             ensayo:p.ensayo||'',grupo:'',nota:p.nota||'',hist:p.hist||[]}; });
         nuevos.ensCampo=(o.data.ensayos||[]).map(x=>({nombre:x.nombre,tipo:x.tipo||'',clones:x.alcance||'',
@@ -1920,20 +1932,39 @@ document.getElementById('file-import').addEventListener('change',e=>{
       }
       if(!nuevos) throw new Error('formato');
       if(!confirm('Esto reemplaza los registros actuales por los de la copia. ¿Continuar?')) return;
+      importando=true;   // bloquea el refresco hasta que TODO haya subido
       data=Object.assign({lotes:[],ensVivero:[],puntos:{},ensCampo:[],log:[]},nuevos);
       if(o.cfg) cfg=migrarCfg(Object.assign(configDefecto(),o.cfg));
-      buildIndex(); aplicarApariencia(); sembrarFaltantes();
+      buildIndex(); aplicarApariencia();
+      // solo se crean puntos NUEVOS si el mapa tiene posiciones que la copia no traía;
+      // esos nacen vacíos, nunca vivos, para no inventar plantas
+      sembrarFaltantesVacios();
       Object.keys(data.puntos).forEach(id=>pend.pts[id]=true);
       data.lotes.forEach(l=>pend.lotes[l.id]=true);
       data.ensVivero.forEach(x=>pend.ensV[x.nombre]=true);
       data.ensCampo.forEach(x=>pend.ensC[x.nombre]=true);
-      pend.cfg=true;
+      pend.cfg=true; ultimoPend=Date.now();
       logEvent('ajuste',null,'Datos importados desde una copia de seguridad');
-      await guardarLocal(); flush(); renderAll(); cerrarAjustes(); toast('Copia importada · subiendo a Sheets');
-    }catch(x){ console.error(x); toast('El archivo no es una copia válida',true); }
+      await guardarLocal(); renderAll(); cerrarAjustes();
+      toast('Importado · subiendo a Sheets, no cierres la página…');
+      await subirTodoImport();
+    }catch(x){ console.error(x); importando=false; toast('El archivo no es una copia válida',true); }
   };
   rd.readAsText(f); e.target.value='';
 });
+/* sube todo lo pendiente en tandas y no libera el refresco hasta terminar */
+async function subirTodoImport(){
+  try{
+    let intentos=0;
+    while(hayPend() && intentos<200){
+      await doFlush();
+      if(hayPend()) await new Promise(r=>setTimeout(r,600));
+      intentos++;
+    }
+    if(hayPend()) toast('Faltaron algunos por subir. Revisa la conexión y toca guardar de nuevo.',true);
+    else toast('Listo · Investigación 6 quedó guardada en Sheets');
+  }finally{ importando=false; setConn(); }
+}
 
 /* ═══════════ REPORTES ═══════════ */
 function pintarReporte(destino,r){
