@@ -1,2 +1,2 @@
 # Vivero-
-Sistema de propagació
+Sistema 
