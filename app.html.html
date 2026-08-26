@@ -278,6 +278,7 @@
     body{background:#fff!important;color:#111!important}
     .no-print,nav.tabs,.mods,.status,.stats,.toolbar,.drawer,.drawer-bg,.modal-bg,.rep-btns,.report-actions,.toast{display:none!important}
     .wrap{max-width:100%;padding:0}
+    body:not(.print-planilla) #mod-inicio{display:none!important}
     body:not(.print-planilla) .view:not(.rep-view){display:none!important}
     body:not(.print-planilla) .rep-view{display:block!important}
     body.print-planilla .view:not(#v-ens-vivero){display:none!important}
@@ -3125,8 +3126,7 @@ function repCampo(tipo){
   if(tipo==='vivas'){
     let tot=0,cv=0;
     const rows=Object.keys(agg).sort((a,b)=>(+a||99)-(+b||99)).map(cl=>{
-      const v=agg[cl].viva; tot+=v; if(v>0)cv++; return ['Clon '+cl,v]; })
-      .filter(r=>r[1]>0);
+      const v=agg[cl].viva+agg[cl].resem; tot+=v; if(v>0)cv++; return ['Clon '+cl,v]; });
     return {titulo:'Clon y plantas vivas',meta,kpis:[['Total plantas vivas',tot],['Clones vivos',cv]],
       tablas:[{cols:['Clon','Plantas vivas'],rows}]};
   }
