@@ -3125,7 +3125,8 @@ function repCampo(tipo){
   if(tipo==='vivas'){
     let tot=0,cv=0;
     const rows=Object.keys(agg).sort((a,b)=>(+a||99)-(+b||99)).map(cl=>{
-      const v=agg[cl].viva+agg[cl].resem; tot+=v; if(v>0)cv++; return ['Clon '+cl,v]; });
+      const v=agg[cl].viva; tot+=v; if(v>0)cv++; return ['Clon '+cl,v]; })
+      .filter(r=>r[1]>0);
     return {titulo:'Clon y plantas vivas',meta,kpis:[['Total plantas vivas',tot],['Clones vivos',cv]],
       tablas:[{cols:['Clon','Plantas vivas'],rows}]};
   }
