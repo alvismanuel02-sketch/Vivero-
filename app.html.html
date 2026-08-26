@@ -892,8 +892,13 @@
 const SUPABASE_URL  = 'https://vbcpyplbyqxpzsgeqvjc.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZiY3B5cGxieXF4cHpzZ2VxdmpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2NzM0MzcsImV4cCI6MjEwMzI0OTQzN30.p2cAzNY2YF5ZqzHbgIsvqttuFhlU3_bSRGzt1pFna-M';
 const SB_BASE = SUPABASE_URL.trim().replace(/\/+$/,'').replace(/\/rest\/v1$/,'');
+/* Versión de la app. La base solo acepta cambios de esta versión.
+   Para dejar fuera las versiones viejas: sube el número aquí y
+   corre el SQL de bloqueo con el mismo número. */
+const APP_VER = 'v3';
 const sb = (SB_BASE.indexOf('http')===0 && window.supabase)
-  ? window.supabase.createClient(SB_BASE, SUPABASE_ANON.trim()) : null;
+  ? window.supabase.createClient(SB_BASE, SUPABASE_ANON.trim(),
+      {global:{headers:{'x-app-ver':APP_VER}}}) : null;
 if(SB_BASE.indexOf('http')===0 && !window.supabase) console.error('No cargó la librería de Supabase');
 const REFRESH_SEG = 40;
 
