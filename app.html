@@ -389,7 +389,29 @@
           <h2>Nuevo lote en túnel</h2>
           <p class="hint">Registra la entrada al túnel. Las etapas siguientes se completan tocando el lote en la tabla.</p>
           <div class="grid g4">
-            <div><label>Clon / variedad *</label><input type="text" id="n-clon" placeholder="21 · 40T · Apodandra"></div>
+            <div><label>Clon / variedad *</label>
+              <select id="n-clon-sel">
+                <option value="">Elige el clon…</option>
+                <optgroup label="Clones madre (M)">
+                  <option value="4A - M">4A - M</option>
+                  <option value="11M">11M</option>
+                  <option value="20M">20M</option>
+                  <option value="21M">21M</option>
+                  <option value="22M">22M</option>
+                  <option value="26M">26M</option>
+                </optgroup>
+                <optgroup label="Clones hijos (H)">
+                  <option value="4B - H">4B - H</option>
+                  <option value="4H">4H</option>
+                  <option value="11H">11H</option>
+                  <option value="20H">20H</option>
+                  <option value="21H">21H</option>
+                  <option value="22H">22H</option>
+                  <option value="26H">26H</option>
+                </optgroup>
+                <option value="__otro">Otro (escribir cuál)</option>
+              </select>
+              <input type="text" id="n-clon" placeholder="Escribe el clon" style="display:none;margin-top:6px"></div>
             <div><label>Tipo de material</label><select id="n-tipo">
               <option>Clon élite</option><option>Apodandra (patrón)</option>
               <option>Tolerante</option><option>Injerto</option><option>Otro</option></select></div>
@@ -1994,14 +2016,26 @@ document.querySelectorAll('[data-hoy]').forEach(b=>b.addEventListener('click',()
 });
 
 /* ═══════════ VIVERO: registro ═══════════ */
-document.getElementById('n-clon').addEventListener('blur',e=>{
-  if(e.target.value.toLowerCase().indexOf('apod')>-1) document.getElementById('n-tipo').value='Apodandra (patrón)';
+function autoTipo(v){
+  if(String(v||'').toLowerCase().indexOf('apod')>-1)
+    document.getElementById('n-tipo').value='Apodandra (patrón)';
+}
+document.getElementById('n-clon').addEventListener('blur',e=>autoTipo(e.target.value));
+document.getElementById('n-clon-sel').addEventListener('change',e=>{
+  const otro=document.getElementById('n-clon'), v=e.target.value;
+  if(v==='__otro'){ otro.style.display=''; otro.value=''; otro.focus(); }
+  else { otro.style.display='none'; otro.value=v; autoTipo(v); }
 });
+/* deja el registro listo para el siguiente lote */
+function limpiarClon(){
+  document.getElementById('n-clon-sel').value='';
+  const o=document.getElementById('n-clon'); o.value=''; o.style.display='none';
+}
 document.getElementById('n-add').addEventListener('click',async()=>{
   const clon=document.getElementById('n-clon').value.trim(), f=document.getElementById('n-ftunel').value;
   const j7c=num(document.getElementById('n-j7c').value), jc=num(document.getElementById('n-jc').value);
   const j=j7c+jc, b=num(document.getElementById('n-btunel').value);
-  if(!clon){ toast('Escribe el clon',true); return; }
+  if(!clon){ toast('Elige el clon en la lista',true); return; }
   if(!f){ toast('Falta la fecha en túnel',true); return; }
   if(j+b<=0){ toast('Registra jiffis J7c, Jc o bolsas',true); return; }
   const lote={id:'L'+Date.now(),clon,tipo:document.getElementById('n-tipo').value,f_tunel:f,
@@ -2013,7 +2047,8 @@ document.getElementById('n-add').addEventListener('click',async()=>{
     nota:document.getElementById('n-nota').value.trim(),creado:nowStamp()};
   data.lotes.unshift(lote); sucioLote(lote.id);
   logEvent('lote',null,`Lote en túnel: clon ${clon} · ${j+b} contenedores`,'vivero');
-  ['n-clon','n-ftunel','n-j7c','n-jc','n-btunel','n-resp','n-nota'].forEach(id=>document.getElementById(id).value='');
+  ['n-ftunel','n-j7c','n-jc','n-btunel','n-resp','n-nota'].forEach(id=>document.getElementById(id).value='');
+  limpiarClon();
   renderAll(); toast('Lote registrado');
 });
 let loteId=null;
