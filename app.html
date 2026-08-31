@@ -437,6 +437,7 @@
         </div>
         <div class="card">
           <h2>Lotes registrados</h2>
+          <p class="hint">Toca ✎ o cualquier fila para corregir el clon, los jiffis o las bolsas. Toca ✕ para borrar el lote.</p>
           <div class="filters">
             <div style="flex:1;min-width:160px"><label>Buscar clon</label><input type="text" id="f-clon" placeholder="Escribe un clon…"></div>
             <div><label>Etapa</label><select id="f-etapa">
@@ -743,7 +744,9 @@
   <div class="metrics" id="l-metrics"></div>
   <div class="stage-block">
     <h4><span class="fdot" style="background:var(--tunel)"></span>Túnel</h4>
-    <div class="field"><label>Clon</label><input type="text" id="l-clon"></div>
+    <div class="field"><label>Clon</label>
+      <select id="l-clon-sel"></select>
+      <input type="text" id="l-clon" placeholder="Escribe el clon" style="display:none;margin-top:6px"></div>
     <div class="field"><label>Tipo de material</label><select id="l-tipo">
       <option>Clon élite</option><option>Apodandra (patrón)</option><option>Tolerante</option>
       <option>Injerto</option><option>Otro</option></select></div>
@@ -1051,6 +1054,17 @@ function etapaDe(l){ if(l.f_campo)return 'campo'; if(l.f_polis)return 'polis'; i
 function fechaEtapa(l){ const e=etapaDe(l); return e==='campo'?l.f_campo:e==='polis'?l.f_polis:e==='endure'?l.f_ce:l.f_tunel; }
 function atrasado(l){ const e=etapaDe(l); if(e==='campo')return false;
   const d=diasDesde(fechaEtapa(l)); return d!==null && d>DUR[e]; }
+/* la misma lista del registro, para poder corregir el clon de un lote */
+const CLONES_M=['4A - M','11M','20M','21M','22M','26M'];
+const CLONES_H=['4B - H','4H','11H','20H','21H','22H','26H'];
+function opcionesClon(sel){
+  const op=v=>`<option value="${esc(v)}"${v===sel?' selected':''}>${esc(v)}</option>`;
+  const enLista=CLONES_M.concat(CLONES_H).indexOf(sel)>-1;
+  return '<option value="">Elige el clon…</option>'+
+    '<optgroup label="Clones madre (M)">'+CLONES_M.map(op).join('')+'</optgroup>'+
+    '<optgroup label="Clones hijos (H)">'+CLONES_H.map(op).join('')+'</optgroup>'+
+    `<option value="__otro"${(!enLista&&sel)?' selected':''}>Otro (escribir cuál)</option>`;
+}
 const contDe=l=>num(l.j_tunel)+num(l.b_tunel);
 /* J7c y Jc por separado. Los lotes viejos solo guardaron la suma en j_tunel:
    en ese caso se muestra la suma y no se inventa el reparto. */
@@ -1709,11 +1723,16 @@ function renderLotes(){
   const rows=lotesFiltrados(), hj=hayJiffis(), hb=hayBolsas(), amb=hj&&hb;
   const h7=hayJ7c(), hc=hayJc(), det=h7||hc;   // ¿algún lote trae el detalle?
   const colsJ = det ? ['Jiffis J7c','Jiffis Jc'].concat(hj?['Jiffis total']:[]) : (hj?['Jiffis']:[]);
-  const cols=['Clon','Tipo','Etapa','F. túnel'].concat(colsJ).concat(hb?['Bolsas']:[]).concat(amb?['Total']:[])
+  const cols=['Editar','Clon','Tipo','Etapa','F. túnel'].concat(colsJ).concat(hb?['Bolsas']:[]).concat(amb?['Total']:[])
     .concat(['F. C.E.','Pasaron','F. polis.','Pasaron','F. campo','Sembradas','Lote destino','Prend.','Total %','Ensayo']);
   t.innerHTML='<thead><tr>'+cols.map(c=>`<th>${c}</th>`).join('')+'</tr></thead><tbody>'+
     (rows.length?rows.map(l=>{ const e=etapaDe(l);
-      let f=`<tr class="clickrow" data-id="${esc(l.id)}"><td><b>Clon ${esc(l.clon)}</b></td>
+      let f=`<tr class="clickrow" data-id="${esc(l.id)}">
+        <td style="white-space:nowrap">
+          <button class="btn ghost" data-ledit="${esc(l.id)}" title="Editar este lote" style="padding:3px 9px;font-size:14px">✎</button>
+          <button class="btn ghost" data-ldel="${esc(l.id)}" title="Borrar este lote" style="padding:3px 9px;font-size:14px">✕</button>
+        </td>
+        <td><b>Clon ${esc(l.clon)}</b></td>
         <td>${esc(tipoDe(l).replace(' (patrón)',''))}</td>
         <td><span class="chip ${e}">${ET_LABEL[e]}</span>${atrasado(l)?' <span class="chip late">atrasado</span>':''}</td>
         <td>${fmtF(l.f_tunel)}</td>`;
@@ -1727,10 +1746,15 @@ function renderLotes(){
       if(amb) f+=`<td>${contDe(l)||'—'}</td>`;
       f+=`<td>${fmtF(l.f_ce)}</td><td>${l.j_ce?num(l.j_ce):'—'}</td><td>${fmtF(l.f_polis)}</td><td>${l.p_polis?num(l.p_polis):'—'}</td>
         <td>${fmtF(l.f_campo)}</td><td>${l.p_campo?num(l.p_campo):'—'}</td><td>${esc(l.lote_destino||'—')}</td>
-        <td>${pctTxt(num(l.j_ce),contDe(l))}</td><td>${pctTxt(num(l.p_campo),contDe(l))}</td><td>${esc(l.ensayo||'—')}</td></tr>`;
+        <td>${pctTxt(num(l.j_ce),contDe(l))}</td><td>${pctTxt(num(l.p_campo),contDe(l))}</td>
+        <td>${esc(l.ensayo||'—')}</td></tr>`;
       return f; }).join('')
     :`<tr><td colspan="${cols.length}" style="color:var(--muted);text-align:center;padding:26px">Ningún lote coincide con el filtro.</td></tr>`)+'</tbody>';
   t.querySelectorAll('tr[data-id]').forEach(tr=>tr.addEventListener('click',()=>abrirLote(tr.dataset.id)));
+  t.querySelectorAll('[data-ledit]').forEach(b=>b.addEventListener('click',ev=>{
+    ev.stopPropagation(); abrirLote(b.dataset.ledit); }));
+  t.querySelectorAll('[data-ldel]').forEach(b=>b.addEventListener('click',ev=>{
+    ev.stopPropagation(); borrarLote(b.dataset.ldel); }));
 }
 
 /* ═══════════ CAMPO: mapa ═══════════ */
@@ -2212,6 +2236,9 @@ function abrirLote(id){
   document.getElementById('l-meta').textContent=`${ET_LABEL[e]} · desde ${fmtF(fechaEtapa(l))} · ${diasDesde(fechaEtapa(l))??'—'} días`;
   const set=(k,v)=>document.getElementById(k).value=v==null?'':v;
   set('l-clon',l.clon); set('l-ftunel',l.f_tunel); set('l-epj',l.epj||2);
+  const cs=document.getElementById('l-clon-sel');
+  cs.innerHTML=opcionesClon(l.clon||'');
+  document.getElementById('l-clon').style.display = cs.value==='__otro' ? '' : 'none';
   set('l-j7c',j7cDe(l)||''); set('l-jc',jcDe(l)||'');
   const ji=document.getElementById('l-jinfo');
   if(ji) ji.innerHTML = tieneDetalleJ(l)
@@ -2283,6 +2310,24 @@ document.getElementById('l-save').addEventListener('click',async()=>{
   l.lote_destino=g('l-lote').trim(); l.resp=g('l-resp').trim();
   l.ensayo=g('l-ensayo'); l.nota=g('l-nota').trim();
   sucioLote(l.id); renderAll(); cerrarLote(); toast('Cambios guardados');
+});
+async function borrarLote(id){
+  const l=data.lotes.find(x=>x.id===id); if(!l){ toast('Ese lote ya no existe',true); return; }
+  const det=[`Clon ${l.clon||'—'}`, l.f_tunel?('túnel '+fmtF(l.f_tunel)):'', 
+             contDe(l)?contDe(l)+' contenedores':''].filter(Boolean).join(' · ');
+  const cn=conteosDe(l).length;
+  if(!confirm(`¿Borrar este lote?\n\n${det}`+
+      (cn?`\n\nTiene ${cn} conteo(s) semanal(es) que también se borran.`:'')+
+      `\n\nNo se puede deshacer.`)) return;
+  data.lotes=data.lotes.filter(x=>x.id!==id); pend.delLotes.push(id); delete pend.lotes[id];
+  await guardarLocal(); flush(); renderAll();
+  if(typeof loteId!=='undefined' && loteId===id) cerrarLote();
+  toast('Lote borrado');
+}
+document.getElementById('l-clon-sel').addEventListener('change',e=>{
+  const otro=document.getElementById('l-clon'), v=e.target.value;
+  if(v==='__otro'){ otro.style.display=''; otro.value=''; otro.focus(); }
+  else { otro.style.display='none'; otro.value=v; }
 });
 document.getElementById('l-del').addEventListener('click',async()=>{
   const l=data.lotes.find(x=>x.id===loteId); if(!l)return;
