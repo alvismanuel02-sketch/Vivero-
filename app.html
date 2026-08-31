@@ -749,7 +749,11 @@
       <option>Injerto</option><option>Otro</option></select></div>
     <div class="field"><label>Fecha en túnel</label>
       <div class="date-row"><input type="date" id="l-ftunel"><button class="btn ghost btn-hoy" data-hoy="l-ftunel">Hoy</button></div></div>
-    <div class="field"><label>Jiffis iniciales</label><input type="number" id="l-jtunel" min="0"></div>
+    <div class="grid g2">
+      <div><label>Jiffis J7c (grandes)</label><input type="number" id="l-j7c" min="0"></div>
+      <div><label>Jiffis Jc (medianos)</label><input type="number" id="l-jc" min="0"></div>
+    </div>
+    <div class="sinfo" id="l-jinfo" style="margin:6px 0 2px"></div>
     <div class="stage-block">
       <h4>Conteo semanal de plántulas vivas</h4>
       <div class="field"><label>Etapa</label><select id="lc-etapa">
@@ -1048,6 +1052,16 @@ function fechaEtapa(l){ const e=etapaDe(l); return e==='campo'?l.f_campo:e==='po
 function atrasado(l){ const e=etapaDe(l); if(e==='campo')return false;
   const d=diasDesde(fechaEtapa(l)); return d!==null && d>DUR[e]; }
 const contDe=l=>num(l.j_tunel)+num(l.b_tunel);
+/* J7c y Jc por separado. Los lotes viejos solo guardaron la suma en j_tunel:
+   en ese caso se muestra la suma y no se inventa el reparto. */
+const j7cDe=l=>num(l.ini_j7c);
+const jcDe =l=>num(l.ini_jc);
+const tieneDetalleJ=l=>(num(l.ini_j7c)+num(l.ini_jc))>0;
+/* para reportes: el detalle, o 's/d' si el lote se registró sin separar */
+const j7cTxt=l=>tieneDetalleJ(l)?j7cDe(l):(num(l.j_tunel)>0?'s/d':0);
+const jcTxt =l=>tieneDetalleJ(l)?jcDe(l) :(num(l.j_tunel)>0?'s/d':0);
+const hayJ7c=()=>data.lotes.some(l=>j7cDe(l)>0);
+const hayJc =()=>data.lotes.some(l=>jcDe(l)>0);
 const estacasDe=l=>num(l.j_tunel)*(num(l.epj)||2)+num(l.b_tunel)*(num(l.epb)||1);
 function tipoDe(l){
   if(l.tipo) return l.tipo;
@@ -1693,7 +1707,9 @@ function renderLotes(){
   const t=document.getElementById('lotes-table');
   if(!data.lotes.length){ t.innerHTML='<tbody><tr><td><div class="empty"><b>Aún no hay lotes</b>Registra el primero con el formulario de arriba.</div></td></tr></tbody>'; return; }
   const rows=lotesFiltrados(), hj=hayJiffis(), hb=hayBolsas(), amb=hj&&hb;
-  const cols=['Clon','Tipo','Etapa','F. túnel'].concat(hj?['Jiffis']:[]).concat(hb?['Bolsas']:[]).concat(amb?['Total']:[])
+  const h7=hayJ7c(), hc=hayJc(), det=h7||hc;   // ¿algún lote trae el detalle?
+  const colsJ = det ? ['Jiffis J7c','Jiffis Jc'].concat(hj?['Jiffis total']:[]) : (hj?['Jiffis']:[]);
+  const cols=['Clon','Tipo','Etapa','F. túnel'].concat(colsJ).concat(hb?['Bolsas']:[]).concat(amb?['Total']:[])
     .concat(['F. C.E.','Pasaron','F. polis.','Pasaron','F. campo','Sembradas','Lote destino','Prend.','Total %','Ensayo']);
   t.innerHTML='<thead><tr>'+cols.map(c=>`<th>${c}</th>`).join('')+'</tr></thead><tbody>'+
     (rows.length?rows.map(l=>{ const e=etapaDe(l);
@@ -1701,7 +1717,12 @@ function renderLotes(){
         <td>${esc(tipoDe(l).replace(' (patrón)',''))}</td>
         <td><span class="chip ${e}">${ET_LABEL[e]}</span>${atrasado(l)?' <span class="chip late">atrasado</span>':''}</td>
         <td>${fmtF(l.f_tunel)}</td>`;
-      if(hj) f+=`<td>${num(l.j_tunel)||'—'}</td>`;
+      if(det){
+        const sinDet = !tieneDetalleJ(l) && num(l.j_tunel)>0;   // lote viejo: solo la suma
+        f+=`<td>${sinDet?'<span class="sm">s/d</span>':(j7cDe(l)||'—')}</td>`;
+        f+=`<td>${sinDet?'<span class="sm">s/d</span>':(jcDe(l)||'—')}</td>`;
+        if(hj) f+=`<td><b>${num(l.j_tunel)||'—'}</b></td>`;
+      } else if(hj) f+=`<td>${num(l.j_tunel)||'—'}</td>`;
       if(hb) f+=`<td>${num(l.b_tunel)||'—'}</td>`;
       if(amb) f+=`<td>${contDe(l)||'—'}</td>`;
       f+=`<td>${fmtF(l.f_ce)}</td><td>${l.j_ce?num(l.j_ce):'—'}</td><td>${fmtF(l.f_polis)}</td><td>${l.p_polis?num(l.p_polis):'—'}</td>
@@ -2190,7 +2211,14 @@ function abrirLote(id){
   document.getElementById('l-title').textContent='Clon '+l.clon;
   document.getElementById('l-meta').textContent=`${ET_LABEL[e]} · desde ${fmtF(fechaEtapa(l))} · ${diasDesde(fechaEtapa(l))??'—'} días`;
   const set=(k,v)=>document.getElementById(k).value=v==null?'':v;
-  set('l-clon',l.clon); set('l-ftunel',l.f_tunel); set('l-jtunel',l.j_tunel); set('l-epj',l.epj||2);
+  set('l-clon',l.clon); set('l-ftunel',l.f_tunel); set('l-epj',l.epj||2);
+  set('l-j7c',j7cDe(l)||''); set('l-jc',jcDe(l)||'');
+  const ji=document.getElementById('l-jinfo');
+  if(ji) ji.innerHTML = tieneDetalleJ(l)
+    ? `Total jiffis: <b>${j7cDe(l)+jcDe(l)}</b>`
+    : (num(l.j_tunel)>0
+        ? `Este lote se registró antes, con <b>${num(l.j_tunel)} jiffis</b> en total y sin separar J7c de Jc. Si escribes el detalle, se guarda.`
+        : 'Sin jiffis registrados.');
   set('l-btunel',l.b_tunel); set('l-epb',l.epb||1); set('l-fce',l.f_ce); set('l-jce',l.j_ce);
   set('l-fpolis',l.f_polis); set('l-ppolis',l.p_polis); set('l-fcampo',l.f_campo); set('l-pcampo',l.p_campo);
   set('l-lote',l.lote_destino); set('l-resp',l.resp); set('l-nota',l.nota);
@@ -2243,7 +2271,11 @@ document.getElementById('l-save').addEventListener('click',async()=>{
   const l=data.lotes.find(x=>x.id===loteId); if(!l)return;
   const g=k=>document.getElementById(k).value;
   l.clon=g('l-clon').trim()||l.clon; l.tipo=g('l-tipo');
-  l.f_tunel=g('l-ftunel'); l.j_tunel=num(g('l-jtunel')); l.epj=num(g('l-epj'))||2;
+  l.f_tunel=g('l-ftunel'); l.epj=num(g('l-epj'))||2;
+  const n7=num(g('l-j7c')), nc=num(g('l-jc'));
+  if(n7+nc>0){ l.ini_j7c=n7; l.ini_jc=nc; l.j_tunel=n7+nc; }
+  else if(tieneDetalleJ(l)){ l.ini_j7c=0; l.ini_jc=0; l.j_tunel=0; }
+  /* si es un lote viejo sin detalle y no escribió nada, se conserva su total */
   l.b_tunel=num(g('l-btunel')); l.epb=num(g('l-epb'))||1;
   l.f_ce=g('l-fce'); l.j_ce=g('l-jce')===''?'':num(g('l-jce'));
   l.f_polis=g('l-fpolis'); l.p_polis=g('l-ppolis')===''?'':num(g('l-ppolis'));
@@ -3318,12 +3350,12 @@ function repViv(tipo){
   if(tipo==='apodandra'){
     const ls=data.lotes.filter(esApo), a=totalesViv(ls);
     const rows=ls.sort((x,y)=>String(y.f_tunel||'').localeCompare(String(x.f_tunel||''))).map(l=>
-      [fmtF(l.f_tunel),num(l.j_tunel),num(l.b_tunel),contDe(l),ET_LABEL[etapaDe(l)],l.j_ce||'—',l.p_polis||'—',
+      [fmtF(l.f_tunel),j7cTxt(l),jcTxt(l),num(l.j_tunel),num(l.b_tunel),contDe(l),ET_LABEL[etapaDe(l)],l.j_ce||'—',l.p_polis||'—',
        l.p_campo||'—',l.lote_destino||'—',pctTxt(num(l.j_ce),contDe(l)),l.resp||'—']);
     return {titulo:'Producción de patrones — Apodandra',meta,
       kpis:[['Lotes',a.lotes],['Contenedores',a.cont],['Prendimiento',pctTxt(a.jCE,a.cont)],
         ['Disponibles hoy',a.disponibles],['En campo',a.pCampo],['Rendimiento total',pctTxt(a.pCampo,a.cont)]],
-      tablas:[{cols:['F. túnel','Jiffis','Bolsas','Contenedores','Etapa','A endurec.','A polis.','A campo','Lote destino','% prend.','Responsable'],rows}]};
+      tablas:[{cols:['F. túnel','Jiffis J7c','Jiffis Jc','Jiffis total','Bolsas','Contenedores','Etapa','A endurec.','A polis.','A campo','Lote destino','% prend.','Responsable'],rows}]};
   }
   if(tipo==='tipos'){
     const m={};
@@ -3373,8 +3405,8 @@ function repViv(tipo){
     const tit={lotes:'Todos los lotes',proceso:'Lotes en proceso',campo:'Lotes sembrados en campo'}[tipo];
     return {titulo:tit,meta,
       kpis: tipo==='campo'?[['Lotes',ls.length],['Plantas sembradas',ls.reduce((s,l)=>s+num(l.p_campo),0)]]:[['Lotes',ls.length]],
-      tablas:[{cols:['Clon','Tipo','Etapa','F. túnel','Jiffis','Bolsas','Contenedores','F. C.E.','Pasaron','F. polis.','Pasaron','F. campo','Sembradas','Lote destino','% prend.','% total','Ensayo','Responsable'],
-        rows:ls.map(l=>['Clon '+l.clon,tipoDe(l),ET_LABEL[etapaDe(l)],fmtF(l.f_tunel),num(l.j_tunel),num(l.b_tunel),contDe(l),
+      tablas:[{cols:['Clon','Tipo','Etapa','F. túnel','Jiffis J7c','Jiffis Jc','Jiffis total','Bolsas','Contenedores','F. C.E.','Pasaron','F. polis.','Pasaron','F. campo','Sembradas','Lote destino','% prend.','% total','Ensayo','Responsable'],
+        rows:ls.map(l=>['Clon '+l.clon,tipoDe(l),ET_LABEL[etapaDe(l)],fmtF(l.f_tunel),j7cTxt(l),jcTxt(l),num(l.j_tunel),num(l.b_tunel),contDe(l),
           fmtF(l.f_ce),l.j_ce||'—',fmtF(l.f_polis),l.p_polis||'—',fmtF(l.f_campo),l.p_campo||'—',l.lote_destino||'—',
           pctTxt(num(l.j_ce),contDe(l)),pctTxt(num(l.p_campo),contDe(l)),l.ensayo||'—',l.resp||'—'])}]};
   }
