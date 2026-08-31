@@ -951,9 +951,16 @@ const KEY = 'sistema-propagacion-v1';
 const CFG_DEF={colores:{viva:'#5bbf62',resem:'#e2a83f',muerta:'#cd5a3a',vacia:'#3d4a3c'},
   ptSize:26, mostrarNum:true, guia:true, surcos:null,
   nombreLote:'Investigación 6',
-  dur:{tunel:14,endure:7,polis:14},
+  dur:{tunel:21,endure:7,polis:14},
   epjDef:2, epbDef:1, diasCorte:45, estacasVareta:3};
 /* atajos que leen de la configuración */
+/* los tiempos correctos: túnel 3 semanas, endurecimiento 1, polisombra 2 */
+const DUR_DEF={tunel:21,endure:7,polis:14};
+function migrarDuraciones(){
+  if(!cfg) return;
+  cfg.dur=cfg.dur||Object.assign({},DUR_DEF);
+  if(+cfg.dur.tunel===14){ cfg.dur.tunel=21; guardarLocal(); }   // corrige el valor viejo
+}
 const DUR = new Proxy({},{get:(_,k)=>((cfg&&cfg.dur&&cfg.dur[k])||{tunel:21,endure:7,polis:14}[k])});
 const dCorte=()=>((cfg&&+cfg.diasCorte)||45);
 const estVareta=()=>((cfg&&+cfg.estacasVareta)||3);
@@ -1339,6 +1346,7 @@ async function load(){
       if(!Object.keys(pend.madres||{}).length) data.madres=parseMadres(srv.madres);
     }catch(e){ console.error(e); }
   }
+  migrarDuraciones();
   const nm=sembrarMadresDef();
   if(nm) logEvent('madre',null,'Plantas madre iniciales: '+nm);
   const nuevos=sembrarFaltantes();
@@ -1381,7 +1389,7 @@ function aplicarDefaults(){
   const resg=document.getElementById('inicio-resumen');
   if(resg) resg.textContent=`${data.lotes.length} lotes · ${totalPuntos()} puntos · ${data.ensVivero.length+data.ensCampo.length} ensayos`;
   const resv=document.getElementById('viv-resumen');
-  if(resv){ const d=cfg.dur||{tunel:14,endure:7,polis:14};
+  if(resv){ const d=cfg.dur||{tunel:21,endure:7,polis:14};
     resv.textContent=`Ciclo: ${d.tunel}+${d.endure}+${d.polis} días`; }
 }
 ['n-epj','n-epb'].forEach(id=>{ const el=document.getElementById(id);
@@ -3060,7 +3068,7 @@ function abrirAjustes(){
   document.getElementById('cfg-nombre').value=cfgTmp.nombreLote||'Investigación 6';
   document.getElementById('cfg-dcorte').value=cfgTmp.diasCorte||45;
   document.getElementById('cfg-estvar').value=cfgTmp.estacasVareta||3;
-  cfgTmp.dur=cfgTmp.dur||{tunel:14,endure:7,polis:14};
+  cfgTmp.dur=cfgTmp.dur||{tunel:21,endure:7,polis:14};
   document.getElementById('cfg-dtunel').value=cfgTmp.dur.tunel;
   document.getElementById('cfg-dce').value=cfgTmp.dur.endure;
   document.getElementById('cfg-dpolis').value=cfgTmp.dur.polis;
@@ -3073,7 +3081,7 @@ function abrirAjustes(){
 }
 function cerrarAjustes(){ document.getElementById('cfgBg').classList.remove('open'); cfgTmp=null; }
 function actualizarCiclo(){
-  const d=cfgTmp.dur||{tunel:14,endure:7,polis:14};
+  const d=cfgTmp.dur||{tunel:21,endure:7,polis:14};
   const tot=(+d.tunel||0)+(+d.endure||0)+(+d.polis||0);
   const el=document.getElementById('cfg-ciclo');
   if(el) el.textContent=`Ciclo completo del vivero: ${tot} días (unas ${(tot/7).toFixed(1)} semanas) desde la estaca hasta que sale a campo.`;
