@@ -755,6 +755,9 @@
     <div class="grid g2">
       <div><label>Jiffis J7c (grandes)</label><input type="number" id="l-j7c" min="0"></div>
       <div><label>Jiffis Jc (medianos)</label><input type="number" id="l-jc" min="0"></div>
+      <div><label>Bolsas iniciales</label><input type="number" id="l-btunel" min="0"></div>
+      <div><label>Estacas por jiffi</label><input type="number" id="l-epj" min="1"></div>
+      <div><label>Estacas por bolsa</label><input type="number" id="l-epb" min="1"></div>
     </div>
     <div class="sinfo" id="l-jinfo" style="margin:6px 0 2px"></div>
     <div class="stage-block">
@@ -773,9 +776,6 @@
       <button class="btn primary full" id="lc-add" style="margin-top:8px">+ Registrar conteo</button>
       <div id="lc-lista" style="margin-top:9px"></div>
     </div>
-    <div class="field"><label>Estacas por jiffi</label><input type="number" id="l-epj" min="1"></div>
-    <div class="field"><label>Bolsas iniciales</label><input type="number" id="l-btunel" min="0"></div>
-    <div class="field"><label>Estacas por bolsa</label><input type="number" id="l-epb" min="1"></div>
   </div>
   <div class="stage-block">
     <h4><span class="fdot" style="background:var(--endure)"></span>Casa de endurecimiento</h4>
@@ -2241,11 +2241,14 @@ function abrirLote(id){
   document.getElementById('l-clon').style.display = cs.value==='__otro' ? '' : 'none';
   set('l-j7c',j7cDe(l)||''); set('l-jc',jcDe(l)||'');
   const ji=document.getElementById('l-jinfo');
-  if(ji) ji.innerHTML = tieneDetalleJ(l)
-    ? `Total jiffis: <b>${j7cDe(l)+jcDe(l)}</b>`
-    : (num(l.j_tunel)>0
-        ? `Este lote se registró antes, con <b>${num(l.j_tunel)} jiffis</b> en total y sin separar J7c de Jc. Si escribes el detalle, se guarda.`
-        : 'Sin jiffis registrados.');
+  if(ji){
+    const bl=num(l.b_tunel), tot=num(l.j_tunel)+bl;
+    ji.innerHTML = tieneDetalleJ(l)
+      ? `Jiffis: <b>${j7cDe(l)+jcDe(l)}</b> (${j7cDe(l)} J7c + ${jcDe(l)} Jc) · Bolsas: <b>${bl}</b> · Total de recipientes: <b>${tot}</b>`
+      : (num(l.j_tunel)>0
+          ? `Este lote se registró antes, con <b>${num(l.j_tunel)} jiffis</b> en total y sin separar J7c de Jc. Bolsas: <b>${bl}</b>. Si escribes el detalle, se guarda.`
+          : (bl>0 ? `Sin jiffis · Bolsas: <b>${bl}</b>` : 'Sin jiffis ni bolsas registrados.'));
+  }
   set('l-btunel',l.b_tunel); set('l-epb',l.epb||1); set('l-fce',l.f_ce); set('l-jce',l.j_ce);
   set('l-fpolis',l.f_polis); set('l-ppolis',l.p_polis); set('l-fcampo',l.f_campo); set('l-pcampo',l.p_campo);
   set('l-lote',l.lote_destino); set('l-resp',l.resp); set('l-nota',l.nota);
