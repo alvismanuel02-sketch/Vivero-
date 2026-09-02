@@ -101,7 +101,8 @@
     border:1px solid rgba(0,0,0,.25);font-family:'JetBrains Mono',monospace;
     font-size:calc(var(--pt) * .38);font-weight:700;display:flex;align-items:center;justify-content:center;
     color:rgba(0,0,0,.62);line-height:1;transition:transform .07s}
-  .pt.viva{background:var(--viva)} .pt.resem{background:var(--resem)}
+  .pt.desarrollo{background:var(--desarrollo)}
+  .pt.viva{background:var(--viva);color:#12250f} .pt.resem{background:var(--resem)}
   .pt.muerta{background:var(--muerta);color:rgba(255,255,255,.9)}
   .pt.vacia{background:var(--vacia);color:var(--muted2)}
   .pt.sinclon{background:#2b332c;color:#4e5c50;border-style:dashed}
@@ -121,7 +122,8 @@
   .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px}
   .tile{border-radius:10px;padding:11px 8px;cursor:pointer;text-align:center;position:relative;
     border:1px solid rgba(0,0,0,.25);color:rgba(0,0,0,.72)}
-  .tile.viva{background:var(--viva)} .tile.resem{background:var(--resem)}
+  .tile.desarrollo{background:var(--desarrollo)}
+  .tile.viva{background:var(--viva);color:#12250f} .tile.resem{background:var(--resem)}
   .tile.muerta{background:var(--muerta);color:rgba(255,255,255,.92)}
   .tile.vacia{background:var(--vacia);color:var(--muted)}
   .tile.sinclon{background:#2b332c;color:#5d6c5f;border-style:dashed}
@@ -273,6 +275,11 @@
   .toast.err{background:var(--alerta);color:#fff}
   .toast button{background:rgba(0,0,0,.22);border:none;color:inherit;padding:5px 11px;border-radius:6px;cursor:pointer;font-weight:700;font-size:12px}
 
+  .pt{position:relative}
+  .clon-badge.sel{outline:2px solid var(--accent);outline-offset:1px}
+  .clon-badge[data-cl]{cursor:pointer}
+  .pt.atenuado{opacity:.18}
+  .pt.delclon{box-shadow:0 0 0 2px var(--accent) inset}
   @media print{
     @page{margin:14mm}
     body{background:#fff!important;color:#111!important}
@@ -674,6 +681,7 @@
             <button class="btn ghost" data-repc="vivas">Clon · plantas vivas</button>
             <button class="btn ghost" data-repc="clon">Estado por clon</button>
             <button class="btn ghost" data-repc="surco">Estado por surco</button>
+            <button class="btn ghost" data-repc="desarrollo">En desarrollo</button>
             <button class="btn ghost" data-repc="madres">Plantas madre</button>
             <button class="btn ghost" data-repc="varetas">Cosecha de varetas</button>
             <button class="btn ghost" data-repc="muertas">Plantas muertas</button>
@@ -694,6 +702,7 @@
   <div class="dhead" id="d-head"><h3 id="d-title">Punto</h3><div class="coord" id="d-coord"></div></div>
   <div class="field"><label>Estado</label>
     <div class="estados" id="d-estados">
+      <button data-e="desarrollo" title="Ya prendió: riesgo de muerte bajo">En desarrollo</button>
       <button data-e="viva">Viva</button><button data-e="resem">Resembrada</button>
       <button data-e="muerta">Muerta</button><button data-e="vacia">Vacía</button></div></div>
   <div class="field"><label>Registrar siembra</label>
@@ -753,9 +762,9 @@
     <div class="field"><label>Fecha en túnel</label>
       <div class="date-row"><input type="date" id="l-ftunel"><button class="btn ghost btn-hoy" data-hoy="l-ftunel">Hoy</button></div></div>
     <div class="grid g2">
+      <div><label>Bolsas iniciales</label><input type="number" id="l-btunel" min="0"></div>
       <div><label>Jiffis J7c (grandes)</label><input type="number" id="l-j7c" min="0"></div>
       <div><label>Jiffis Jc (medianos)</label><input type="number" id="l-jc" min="0"></div>
-      <div><label>Bolsas iniciales</label><input type="number" id="l-btunel" min="0"></div>
       <div><label>Estacas por jiffi</label><input type="number" id="l-epj" min="1"></div>
       <div><label>Estacas por bolsa</label><input type="number" id="l-epb" min="1"></div>
     </div>
@@ -768,9 +777,9 @@
       <div class="field"><label>Fecha del conteo</label>
         <div class="date-row"><input type="date" id="lc-f"><button class="btn ghost btn-hoy" id="lc-f-hoy">Hoy</button></div></div>
       <div class="grid g2">
+        <div><label>Bolsas</label><input type="number" id="lc-bolsa" min="0" placeholder="0"></div>
         <div><label>Jiffis J7c</label><input type="number" id="lc-j7c" min="0" placeholder="0"></div>
         <div><label>Jiffis Jc</label><input type="number" id="lc-jc" min="0" placeholder="0"></div>
-        <div><label>Bolsas</label><input type="number" id="lc-bolsa" min="0" placeholder="0"></div>
         <div><label>Nota</label><input type="text" id="lc-nota" placeholder="Opcional"></div>
       </div>
       <button class="btn primary full" id="lc-add" style="margin-top:8px">+ Registrar conteo</button>
@@ -880,6 +889,7 @@
     </div>
     <div class="sview" id="s-datos">
       <p class="hint">Guarda o restaura una copia de los registros. Descarga la copia completa antes de cualquier cambio grande.</p>
+      <button class="btn ghost full" id="btn-todas-des" style="margin-bottom:12px">✓ Marcar todas las vivas como "en desarrollo"</button>
       <button class="btn primary full" id="btn-export" style="margin-bottom:9px">⬇ Copia completa (vivero + Investigación 6)</button>
       <div style="display:flex;gap:8px;margin-bottom:12px">
         <button class="btn ghost" id="btn-export-viv" style="flex:1">⬇ Solo vivero</button>
@@ -955,7 +965,7 @@ const REFRESH_SEG = 40;
 
 const USE_SHEET = !!sb;
 const KEY = 'sistema-propagacion-v1';
-const CFG_DEF={colores:{viva:'#5bbf62',resem:'#e2a83f',muerta:'#cd5a3a',vacia:'#3d4a3c'},
+const CFG_DEF={colores:{desarrollo:'#3fa64a',viva:'#8fb3d9',resem:'#e2a83f',muerta:'#cd5a3a',vacia:'#3d4a3c'},
   ptSize:26, mostrarNum:true, guia:true, surcos:null,
   nombreLote:'Investigación 6',
   dur:{tunel:21,endure:7,polis:14},
@@ -963,6 +973,19 @@ const CFG_DEF={colores:{viva:'#5bbf62',resem:'#e2a83f',muerta:'#cd5a3a',vacia:'#
 /* atajos que leen de la configuración */
 /* los tiempos correctos: túnel 3 semanas, endurecimiento 1, polisombra 2 */
 const DUR_DEF={tunel:21,endure:7,polis:14};
+/* Las plantas que ya estaban vivas (verdes en la versión anterior) pasan a
+   "en desarrollo": son plantas ya prendidas. Se hace UNA sola vez; la marca
+   viaja en la configuración para que no se repita en los demás celulares. */
+function migrarVerdeADesarrollo(){
+  if(!cfg || cfg.migVerde) return;
+  const ids=Object.keys(data.puntos).filter(id=>data.puntos[id].estado==='viva');
+  cfg.migVerde=true; pend.cfg=true;
+  if(!ids.length){ guardarLocal(); return; }
+  ids.forEach(id=>{ data.puntos[id].estado='desarrollo'; pend.pts[id]=true; });
+  logEvent('estado',null,`${ids.length} planta(s) viva(s) pasaron a "en desarrollo"`);
+  setTimeout(()=>toast(`${ids.length} plantas quedaron en verde (en desarrollo)`),1400);
+  guardarLocal(); flush();
+}
 function migrarDuraciones(){
   if(!cfg) return;
   cfg.dur=cfg.dur||Object.assign({},DUR_DEF);
@@ -1014,6 +1037,12 @@ function parseRango(txt){
   return [...new Set(out)].sort((a,b)=>a-b);
 }
 function migrarCfg(c){
+  /* el verde ahora es "en desarrollo"; las vivas pasan a un tono aparte */
+  c.colores=c.colores||{};
+  if(!c.colores.desarrollo){
+    c.colores.desarrollo='#3fa64a';
+    if(!c.colores.viva || c.colores.viva==='#5bbf62') c.colores.viva='#8fb3d9';
+  }
   if(!c||!c.surcos) return c;
   c.surcos.forEach(su=>{
     if(su.asign){ su.total=su.total||su.asign.reduce((m,a)=>Math.max(m,...parseRango(a.r)),0); return; }
@@ -1117,25 +1146,28 @@ const hayBolsas=()=>data.lotes.some(l=>num(l.b_tunel)>0);
 /* ---------- campo: cálculos ---------- */
 const esSembrado=pt=>!!(pt&&(pt.sembrada||pt.fecha));
 function countsCampo(){
-  let viva=0,resem=0,muerta=0,vacia=0,rt=0,semb=0,conClon=0,varetas=0,madres=0;
+  let viva=0,resem=0,muerta=0,vacia=0,desarrollo=0,rt=0,semb=0,conClon=0,varetas=0,madres=0;
   eachPunto((pt,s,p)=>{
     if(clonForPoint(s,p)) conClon++;
-    if(pt.estado==='viva')viva++;else if(pt.estado==='resem')resem++;
+    if(pt.estado==='desarrollo')desarrollo++;
+    else if(pt.estado==='viva')viva++;else if(pt.estado==='resem')resem++;
     else if(pt.estado==='muerta')muerta++;else vacia++;
     rt+=(pt.resiembras||0); if(esSembrado(pt))semb++;
     const co=pt.cosechas||[]; if(co.length)madres++;
     co.forEach(c=>varetas+=num(c.n));
   });
-  const vivas=viva+resem, superv=(vivas+muerta)?Math.round(vivas/(vivas+muerta)*100):0;
-  return {viva,resem,muerta,vacia,vivas,sembradas:semb,sinSembrar:Math.max(0,conClon-semb),
-    superv,resiembrasTotal:rt,conClon,varetas,madres};
+  /* "en desarrollo" también es planta viva: es una viva ya prendida */
+  const vivas=viva+resem+desarrollo, superv=(vivas+muerta)?Math.round(vivas/(vivas+muerta)*100):0;
+  const pctDes=vivas?Math.round(desarrollo/vivas*100):0;
+  return {viva,resem,muerta,vacia,desarrollo,vivas,sembradas:semb,sinSembrar:Math.max(0,conClon-semb),
+    superv,pctDes,resiembrasTotal:rt,conClon,varetas,madres};
 }
 function aggClonCampo(){
   const agg={};
   eachPunto((pt,s,p)=>{
     const c=clonForPoint(s,p); if(!c) return;
-    agg[c]=agg[c]||{viva:0,resem:0,muerta:0,vacia:0,resiembras:0,semb:0,varetas:0,cortes:0,ult:null,puntos:0};
-    agg[c][pt.estado]++; agg[c].resiembras+=(pt.resiembras||0); agg[c].puntos++;
+    agg[c]=agg[c]||{viva:0,resem:0,muerta:0,vacia:0,desarrollo:0,resiembras:0,semb:0,varetas:0,cortes:0,ult:null,puntos:0};
+    if(agg[c][pt.estado]!==undefined) agg[c][pt.estado]++; agg[c].resiembras+=(pt.resiembras||0); agg[c].puntos++;
     if(esSembrado(pt)) agg[c].semb++;
     (pt.cosechas||[]).forEach(co=>{ agg[c].varetas+=num(co.n); agg[c].cortes++;
       if(co.f && (!agg[c].ult || co.f>agg[c].ult)) agg[c].ult=co.f; });
@@ -1196,6 +1228,16 @@ const sheet={
     if(res && res.error) throw res.error;
   }
 };
+/* Guarda una copia de rescate del estado actual antes de reemplazarlo con
+   lo que llega del servidor. Sirve para recuperar si algo sale mal. */
+const KEY_BAK=KEY+'_bak';
+async function respaldoSeguridad(){
+  try{
+    if(!Object.keys(data.puntos||{}).length) return;   // nada que respaldar
+    await window.storage.set(KEY_BAK, JSON.stringify({
+      cuando:new Date().toISOString(), data, cfg }), false);
+  }catch(e){ console.error('respaldo',e); }
+}
 async function guardarLocal(){ try{ await window.storage.set(KEY,JSON.stringify({data,cfg,pend}),false); }catch(e){console.error(e);} }
 async function leerLocal(){
   try{ const r=await window.storage.get(KEY,false);
@@ -1366,15 +1408,24 @@ async function load(){
       if(srv.cfg && !pend.cfg){ let c=srv.cfg; if(typeof c==='string'){ try{c=JSON.parse(c);}catch(x){c=null;} }
         if(c){ cfg=migrarCfg(Object.assign(configDefecto(),c)); buildIndex(); } }
       const mios={}; Object.keys(pend.pts).forEach(id=>{ if(data.puntos[id]) mios[id]=data.puntos[id]; });
-      if(!Object.keys(pend.lotes).length) data.lotes=srv.lotes||[];
-      if(!Object.keys(pend.ensV).length) data.ensVivero=parseEnsVivero(srv.ensVivero);
-      if(!Object.keys(pend.ensC).length) data.ensCampo=parseEnsCampo(srv.ensCampo);
-      data.puntos=parsePuntos(srv.puntos); Object.assign(data.puntos,mios);
-      if((srv.log||[]).length) data.log=srv.log;
-      if(!Object.keys(pend.madres||{}).length) data.madres=parseMadres(srv.madres);
+      const srvPts=parsePuntos(srv.puntos), nSrv=Object.keys(srvPts).length, nLoc=Object.keys(data.puntos).length;
+      /* si la lectura llegó vacía o a medias, se conserva lo que hay guardado aquí */
+      const dudosa = nLoc>0 && (nSrv===0 || (nLoc>=20 && nSrv < nLoc*0.5));
+      if(dudosa){
+        console.warn('lectura incompleta al abrir: '+nSrv+' de '+nLoc+' puntos. Se conserva lo local.');
+        setTimeout(()=>toast('Conexión inestable al abrir. Se conservaron tus datos guardados.',true),1200);
+      } else {
+        if(!Object.keys(pend.lotes).length) data.lotes=srv.lotes||[];
+        if(!Object.keys(pend.ensV).length) data.ensVivero=parseEnsVivero(srv.ensVivero);
+        if(!Object.keys(pend.ensC).length) data.ensCampo=parseEnsCampo(srv.ensCampo);
+        data.puntos=srvPts; Object.assign(data.puntos,mios);
+        if((srv.log||[]).length) data.log=srv.log;
+        if(!Object.keys(pend.madres||{}).length) data.madres=parseMadres(srv.madres);
+      }
     }catch(e){ console.error(e); }
   }
   migrarDuraciones();
+  migrarVerdeADesarrollo();
   const nm=sembrarMadresDef();
   if(nm) logEvent('madre',null,'Plantas madre iniciales: '+nm);
   const nuevos=sembrarFaltantes();
@@ -1392,11 +1443,22 @@ async function refrescar(){
   if(hayPend()){ flush(); return; }
   // segunda barrera: no traer del servidor si en los últimos 8 s hubo algo pendiente
   if(Date.now()-ultimoPend < 8000){ return; }
+  const t0=Date.now();                  // momento en que arranca la lectura
   try{
     const srv=await sheet.load();
     if(hayPend()||importando) return;   // por si algo entró mientras cargaba
+    /* CARRERA: si el usuario tocó algo MIENTRAS se descargaba, lo que llega
+       ya está viejo y borraría ese cambio. Se descarta y se reintenta luego. */
+    if(ultimoPend > t0){ return; }
+    /* RESPUESTA SOSPECHOSA: nunca cambiar datos buenos por una respuesta vacía */
+    const nSrv=(srv.puntos||[]).length, nLoc=Object.keys(data.puntos).length;
+    if(nLoc>0 && nSrv===0){ console.warn('refresco descartado: el servidor devolvió 0 puntos'); return; }
+    if(nLoc>=20 && nSrv < nLoc*0.5){    // llegó menos de la mitad: lectura incompleta
+      console.warn('refresco descartado: llegaron '+nSrv+' puntos de '+nLoc);
+      toast('Conexión inestable: no se actualizó para no perder datos',true); return; }
     if(srv.cfg){ let c=srv.cfg; if(typeof c==='string'){ try{c=JSON.parse(c);}catch(x){c=null;} }
       if(c){ cfg=migrarCfg(Object.assign(configDefecto(),c)); buildIndex(); aplicarApariencia(); } }
+    await respaldoSeguridad();          // copia de rescate antes de reemplazar
     data.lotes=srv.lotes||[]; data.ensVivero=parseEnsVivero(srv.ensVivero);
     data.ensCampo=parseEnsCampo(srv.ensCampo); data.puntos=parsePuntos(srv.puntos);
     if((srv.log||[]).length) data.log=srv.log;
@@ -1424,6 +1486,7 @@ function aplicarDefaults(){
   if(el) el.addEventListener('input',()=>el.dataset.tocado='1'); });
 function aplicarApariencia(){
   const r=document.documentElement.style;
+  r.setProperty('--desarrollo',cfg.colores.desarrollo||'#3fa64a');
   r.setProperty('--viva',cfg.colores.viva); r.setProperty('--resem',cfg.colores.resem);
   r.setProperty('--muerta',cfg.colores.muerta); r.setProperty('--vacia',cfg.colores.vacia);
   r.setProperty('--pt',cfg.ptSize+'px');
@@ -1452,7 +1515,11 @@ function llenarSelects(){
   ss.innerHTML='<option value="">Todo el mapa</option>'+surcoNums().map(s=>`<option value="${s}">Surco ${s} · ${esc(etiquetaSurco(s))}</option>`).join('');
   ss.value=sv;
   const rs=document.getElementById('modo-resaltar'), rv=resaltarModo;
-  rs.innerHTML='<option value="todo">Todo</option><option value="sembrados">Solo sembrados</option>'+
+  rs.innerHTML='<option value="todo">Todo</option>'+
+    '<option value="desarrollo">Solo en desarrollo</option>'+
+    '<option value="vivas">Solo vivas (sin confirmar)</option>'+
+    '<option value="todasvivas">Todas las vivas</option>'+
+    '<option value="sembrados">Solo sembrados</option>'+
     '<option value="resembrados">Solo resembrados</option><option value="muertos">Solo muertos</option>'+
     '<option value="sinsembrar">Sin sembrar</option><option value="convaretas">Con varetas cosechadas</option>'+
     (data.ensCampo.length?'<optgroup label="Ensayos">'+data.ensCampo.map(e=>`<option value="ens:${esc(e.nombre)}">${esc(e.nombre)}</option>`).join('')+'</optgroup>':'');
@@ -1476,7 +1543,7 @@ function ultCorteMadre(m){
 const txtDias=f=>{ const d=diasDesde(f); return d===null?'—':d+' d'; };
 
 /* ═══ RECIPIENTES Y DISPONIBILIDAD POR ETAPA ═══ */
-const RECIP=[['j7c','Jiffis J7c'],['jc','Jiffis Jc'],['bolsa','Bolsas']];
+const RECIP=[['bolsa','Bolsas'],['j7c','Jiffis J7c'],['jc','Jiffis Jc']];
 const ETAPAS=[['tunel','Túnel'],['ce','Casa de endurecimiento'],['polis','Polisombra']];
 /* cuánto dura cada etapa: túnel 3 semanas, endurecimiento 1, polisombra 2 */
 const durEtapa=e=>(+DUR[e]||0);
@@ -1546,7 +1613,7 @@ function recipPorClon(){
 const nomRecip=k=>(RECIP.find(r=>r[0]===k)||[,'—'])[1];
 function clonesVivosCampo(){
   const a=aggClonCampo();
-  return Object.keys(a).filter(c=>(a[c].viva+a[c].resem)>0).length;
+  return Object.keys(a).filter(c=>(a[c].viva+a[c].resem+a[c].desarrollo)>0).length;
 }
 /* ═══════════ INICIO ═══════════ */
 function renderInicio(){
@@ -1554,6 +1621,8 @@ function renderInicio(){
   document.getElementById('inicio-kpis').innerHTML=`
     <div class="kpi"><div class="n" style="color:var(--viva)">${cc.vivas}</div><div class="l">Vivas en Investigación 6</div>
       <div class="d">${cc.superv}% de supervivencia</div></div>
+    <div class="kpi"><div class="n" style="color:var(--desarrollo)">${cc.desarrollo}</div>
+      <div class="l">En desarrollo</div><div class="d">${cc.pctDes}% de las vivas ya prendieron</div></div>
     <div class="kpi"><div class="n">${clonesVivosCampo()}</div><div class="l">Clones con plantas vivas</div>
       <div class="d">de ${totalPuntos()} puntos</div></div>
     <div class="kpi"><div class="n" style="color:var(--resem)">${cc.resem}</div><div class="l">Puntos resembrados</div>
@@ -1700,11 +1769,11 @@ function renderDispo(){
     <div class="kpi"><div class="n" style="color:var(--accent)">${(t.tunel+t.ce+t.polis).toLocaleString('es-CO')}</div>
       <div class="l">Total disponible</div><div class="d">${t.j7c} J7c · ${t.jc} Jc · ${t.bolsa} bolsas</div></div>`;
   el.innerHTML= rs.length
-    ? '<thead><tr><th>Clon</th><th>Lotes</th><th>Túnel</th><th>C. endurec.</th><th>Polisombra</th><th>Total</th><th>J7c</th><th>Jc</th><th>Bolsas</th><th>Último conteo</th></tr></thead><tbody>'+
+    ? '<thead><tr><th>Clon</th><th>Lotes</th><th>Túnel</th><th>C. endurec.</th><th>Polisombra</th><th>Total</th><th>Bolsas</th><th>J7c</th><th>Jc</th><th>Último conteo</th></tr></thead><tbody>'+
       rs.map(r=>`<tr><td><b>${esc(etiqClon(r.clon))}</b></td><td>${r.lotes}</td>
         <td style="color:var(--tunel)">${r.tunel}</td><td style="color:var(--endure)">${r.ce}</td>
         <td style="color:var(--polis)">${r.polis}</td><td><b>${r.tunel+r.ce+r.polis}</b></td>
-        <td>${r.j7c}</td><td>${r.jc}</td><td>${r.bolsa}</td><td>${fmtF(r.ult)}</td></tr>`).join('')+'</tbody>'
+        <td>${r.bolsa}</td><td>${r.j7c}</td><td>${r.jc}</td><td>${fmtF(r.ult)}</td></tr>`).join('')+'</tbody>'
     : '<tbody><tr><td><div class="empty"><b>Sin conteos registrados</b>Abre un lote y registra el conteo semanal de plántulas vivas.</div></td></tr></tbody>';
 }
 function lotesFiltrados(){
@@ -1723,7 +1792,8 @@ function renderLotes(){
   const rows=lotesFiltrados(), hj=hayJiffis(), hb=hayBolsas(), amb=hj&&hb;
   const h7=hayJ7c(), hc=hayJc(), det=h7||hc;   // ¿algún lote trae el detalle?
   const colsJ = det ? ['Jiffis J7c','Jiffis Jc'].concat(hj?['Jiffis total']:[]) : (hj?['Jiffis']:[]);
-  const cols=['Editar','Clon','Tipo','Etapa','F. túnel'].concat(colsJ).concat(hb?['Bolsas']:[]).concat(amb?['Total']:[])
+  /* las bolsas van antes de los jiffis */
+  const cols=['Editar','Clon','Tipo','Etapa','F. túnel'].concat(hb?['Bolsas']:[]).concat(colsJ).concat(amb?['Total']:[])
     .concat(['F. C.E.','Pasaron','F. polis.','Pasaron','F. campo','Sembradas','Lote destino','Prend.','Total %','Ensayo']);
   t.innerHTML='<thead><tr>'+cols.map(c=>`<th>${c}</th>`).join('')+'</tr></thead><tbody>'+
     (rows.length?rows.map(l=>{ const e=etapaDe(l);
@@ -1736,13 +1806,13 @@ function renderLotes(){
         <td>${esc(tipoDe(l).replace(' (patrón)',''))}</td>
         <td><span class="chip ${e}">${ET_LABEL[e]}</span>${atrasado(l)?' <span class="chip late">atrasado</span>':''}</td>
         <td>${fmtF(l.f_tunel)}</td>`;
+      if(hb) f+=`<td>${num(l.b_tunel)||'—'}</td>`;
       if(det){
         const sinDet = !tieneDetalleJ(l) && num(l.j_tunel)>0;   // lote viejo: solo la suma
         f+=`<td>${sinDet?'<span class="sm">s/d</span>':(j7cDe(l)||'—')}</td>`;
         f+=`<td>${sinDet?'<span class="sm">s/d</span>':(jcDe(l)||'—')}</td>`;
         if(hj) f+=`<td><b>${num(l.j_tunel)||'—'}</b></td>`;
       } else if(hj) f+=`<td>${num(l.j_tunel)||'—'}</td>`;
-      if(hb) f+=`<td>${num(l.b_tunel)||'—'}</td>`;
       if(amb) f+=`<td>${contDe(l)||'—'}</td>`;
       f+=`<td>${fmtF(l.f_ce)}</td><td>${l.j_ce?num(l.j_ce):'—'}</td><td>${fmtF(l.f_polis)}</td><td>${l.p_polis?num(l.p_polis):'—'}</td>
         <td>${fmtF(l.f_campo)}</td><td>${l.p_campo?num(l.p_campo):'—'}</td><td>${esc(l.lote_destino||'—')}</td>
@@ -1771,6 +1841,9 @@ function renderStatsCampo(){
 function pasaResaltado(s,p){
   if(resaltarModo==='todo') return true;
   const pt=data.puntos[pkey(s,p)]; if(!pt) return false;
+  if(resaltarModo==='desarrollo') return pt.estado==='desarrollo';
+  if(resaltarModo==='vivas') return pt.estado==='viva';
+  if(resaltarModo==='todasvivas') return pt.estado==='viva'||pt.estado==='desarrollo'||pt.estado==='resem';
   if(resaltarModo==='sembrados') return esSembrado(pt);
   if(resaltarModo==='sinsembrar') return !esSembrado(pt)&&!!clonForPoint(s,p);
   if(resaltarModo==='resembrados') return (pt.resiembras||0)>0||pt.estado==='resem';
@@ -1786,7 +1859,8 @@ function claseGrupo(pt){
   return g.indexOf('testigo')>-1?' g-test':' g-trat';
 }
 function renderLeyenda(){
-  let h=`<span><i class="sw" style="background:var(--viva)"></i>Viva</span>
+  let h=`<span><i class="sw" style="background:var(--desarrollo)"></i>En desarrollo</span>
+    <span><i class="sw" style="background:var(--viva)"></i>Viva</span>
     <span><i class="sw" style="background:var(--resem)"></i>Resembrada</span>
     <span><i class="sw" style="background:var(--muerta)"></i>Muerta</span>
     <span><i class="sw" style="background:var(--vacia)"></i>Vacía</span>
@@ -1794,6 +1868,22 @@ function renderLeyenda(){
   if(resaltarModo.indexOf('ens:')===0)
     h+=`<span><i class="sw trat"></i>Tratamiento</span><span><i class="sw test"></i>Testigo</span>`;
   document.getElementById('map-legend').innerHTML=h;
+}
+/* qué clones hay en un surco */
+/* clon seleccionado para resaltar en el mapa (null = ninguno) */
+let clonSel=null;
+/* etiquetas de clon del surco: al tocarlas se resaltan sus puntos */
+function leyendaClonesSurco(s){
+  const cs=clonesDelSurco(s);
+  if(!cs.length) return `<span class="clon-badge">${esc(etiquetaSurco(s))}</span>`;
+  return cs.map(c=>`<span class="clon-badge${clonSel===String(c)?' sel':''}" data-cl="${esc(c)}"
+    title="Tocar para resaltar los puntos del clon ${esc(c)}">Clon ${esc(c)}</span>`).join(' ');
+}
+function clonesDelSurco(s){
+  const vistos=[];
+  for(let p=1;p<=ptsDe(s);p++){ const i=IDX[s]&&IDX[s][p]; if(!i) continue;
+    if(vistos.indexOf(i.clon)===-1) vistos.push(i.clon); }
+  return vistos;
 }
 function renderMapa(){
   renderLeyenda();
@@ -1804,12 +1894,16 @@ function renderMapa(){
   let h='';
   surcoNums().forEach(s=>{
     h+=`<div class="surco" data-s="${s}"><div class="surco-head" data-goto="${s}" title="${esc(detalleSurco(s))}">
-      <span class="surco-id">S${s}</span><span class="clon-badge">${esc(etiquetaSurco(s))}</span></div><div class="points">`;
+      <span class="surco-id">S${s}</span>${leyendaClonesSurco(s)}</div><div class="points">`;
     for(let p=1;p<=ptsDe(s);p++){
       const pt=data.puntos[pkey(s,p)]||{estado:'vacia'}, info=IDX[s][p], prev=IDX[s][p-1];
       const borde=info&&(!prev||prev.clon!==info.clon);
-      h+=`<div class="pt ${pt.estado}${borde?' borde':''}${info?'':' sinclon'}${pasaResaltado(s,p)?'':' off'}${claseGrupo(pt)}${(pt.cosechas||[]).length?' tienevareta':''}"
-        data-s="${s}" data-p="${p}" title="Surco ${s} · pos ${p}${info?' · Clon '+info.clon+' · Punto '+info.num:' · sin clon'}">${info?info.num:''}</div>`;
+      /* si hay un clon seleccionado, se resaltan sus puntos y se atenúan los demás */
+      let marca='';
+      if(clonSel){ marca = (info && String(info.clon)===clonSel) ? ' delclon' : ' atenuado'; }
+      h+=`<div class="pt ${pt.estado}${borde?' borde':''}${info?'':' sinclon'}${pasaResaltado(s,p)?'':' off'}${claseGrupo(pt)}${(pt.cosechas||[]).length?' tienevareta':''}${marca}"
+        data-s="${s}" data-p="${p}"
+        title="Surco ${s} · punto ${p} de ${ptsDe(s)}${info?' · Clon '+info.clon:' · sin clon'}">${p}</div>`;
     }
     h+='</div></div>';
   });
@@ -1822,14 +1916,14 @@ function renderSolo(){
   document.getElementById('solo-t').textContent='Surco '+s+' · '+etiquetaSurco(s);
   let vi=0,mu=0,se=0,va=0;
   for(let p=1;p<=ptsDe(s);p++){ const pt=data.puntos[pkey(s,p)]; if(!pt)continue;
-    if(pt.estado==='viva'||pt.estado==='resem')vi++; else if(pt.estado==='muerta')mu++;
+    if(pt.estado==='viva'||pt.estado==='resem'||pt.estado==='desarrollo')vi++; else if(pt.estado==='muerta')mu++;
     if(esSembrado(pt))se++; (pt.cosechas||[]).forEach(c=>va+=num(c.n)); }
   document.getElementById('solo-m').textContent=`${ptsDe(s)} puntos · ${se} sembradas · ${vi} vivas · ${mu} muertas${va?' · '+va+' varetas':''}`;
   let h='';
   for(let p=1;p<=ptsDe(s);p++){
     const pt=data.puntos[pkey(s,p)]||{estado:'vacia'}, info=IDX[s][p];
     h+=`<div class="tile ${pt.estado}${info?'':' sinclon'}${pasaResaltado(s,p)?'':' off'}${claseGrupo(pt)}" data-s="${s}" data-p="${p}">
-      <div class="num">${info?info.num:'·'}</div><div class="cl">${info?'Clon '+esc(info.clon):'pos '+p}</div></div>`;
+      <div class="num">${p}</div><div class="cl">${info?'Clon '+esc(info.clon):'sin clon'}</div></div>`;
   }
   document.getElementById('tiles').innerHTML=h;
 }
@@ -1837,7 +1931,7 @@ function renderClonTable(){
   const agg=aggClonCampo(), clones=Object.keys(agg).sort((a,b)=>(+a||99)-(+b||99));
   document.getElementById('clon-table').innerHTML=
     '<thead><tr><th>Clon</th><th>Puntos</th><th>Sembradas</th><th>Vivas</th><th>Resemb.</th><th>Muertas</th><th>Varetas</th><th>% superv.</th></tr></thead><tbody>'+
-    clones.map(c=>{ const a=agg[c], v=a.viva+a.resem, sup=(v+a.muerta)?Math.round(v/(v+a.muerta)*100):0;
+    clones.map(c=>{ const a=agg[c], v=a.viva+a.resem+a.desarrollo, sup=(v+a.muerta)?Math.round(v/(v+a.muerta)*100):0;
       return `<tr><td><b>Clon ${esc(c)}</b></td><td>${a.puntos}</td><td>${a.semb}</td>
         <td style="color:var(--viva)">${v}</td><td style="color:var(--resem)">${a.resem}</td>
         <td style="color:var(--muerta)">${a.muerta}</td><td style="color:var(--vareta)">${a.varetas||'—'}</td>
@@ -1922,6 +2016,8 @@ function renderFrutosTabla(){
         <td style="color:var(--muerta)"><b>${ts}</b></td><td><b>${tv+ts}</b></td><td></td><td></td></tr></tbody>`
     : '<tbody><tr><td><div class="empty"><b>Sin verificaciones de frutos</b>Abre un punto del mapa y registra los frutos verdes y secos.</div></td></tr></tbody>';
 }
+/* cuando está bloqueado, las estacas se ven pero no se pueden editar */
+let esBloqueado=false;
 function buscarCortes(){
   const f=document.getElementById('es-f').value;
   const cl=(document.getElementById('es-clon').value||'').trim();
@@ -1947,10 +2043,20 @@ function buscarCortes(){
     '<div class="scroll"><table><thead><tr><th>Fecha</th><th>Punto</th><th>Clon</th><th>Varetas</th><th>Estacas</th></tr></thead><tbody>'+
     items.map((x,k)=>`<tr><td>${fmtF(x.f)}</td><td><b>${etiqPunto(x.s,x.p)}</b></td><td>${esc(x.clon)}</td>
       <td style="color:var(--vareta)">${x.n}</td>
-      <td><input type="number" min="0" data-esrow="${k}" value="${x.es>0?x.es:''}" placeholder="0"
-        style="width:82px;padding:5px 7px"></td></tr>`).join('')+
+      <td>`+(esBloqueado
+        ? `<b style="color:var(--accent)">${x.es>0?x.es:'—'}</b>`
+        : `<input type="number" min="0" data-esrow="${k}" value="${x.es>0?x.es:''}" placeholder="0"
+           style="width:82px;padding:5px 7px">`)+`</td></tr>`).join('')+
     '</tbody></table></div>'+
-    '<button class="btn primary full" id="es-guardar" style="margin-top:9px">Guardar estacas</button>';
+    (esBloqueado
+      ? '<div class="sinfo" style="margin-top:8px">✓ Guardado. Los números quedaron bloqueados para no cambiarlos por error.</div>'+
+        '<button class="btn ghost full" id="es-editar" style="margin-top:7px">Corregir estas estacas</button>'
+      : '<button class="btn primary full" id="es-guardar" style="margin-top:9px">Guardar estacas</button>');
+  if(esBloqueado){
+    const be=document.getElementById('es-editar');
+    if(be) be.addEventListener('click',()=>{ esBloqueado=false; buscarCortes(); });
+    return;                       // en solo lectura no hay nada más que enganchar
+  }
   document.getElementById('es-guardar').addEventListener('click',()=>{
     let cam=0,tot=0;
     el.querySelectorAll('[data-esrow]').forEach(inp=>{
@@ -1961,7 +2067,9 @@ function buscarCortes(){
     });
     if(!cam){ toast('No hubo cambios'); return; }
     logEvent('estacas',null,`${cam} corte(s) actualizados · ${tot} estacas`);
-    renderJardin(); renderLog(); buscarCortes();
+    /* queda en SOLO LECTURA: se ve lo guardado pero ya no se puede cambiar sin querer */
+    esBloqueado=true; buscarCortes();
+    renderJardin(); renderLog();
     toast(`${tot} estacas guardadas en ${cam} corte(s)`);
   });
 }
@@ -2018,7 +2126,7 @@ function renderJardin(){
   const uni={};
   Object.keys(agg).forEach(c=>{ const k=normClon(c), a=agg[c];
     uni[k]=uni[k]||{clon:k,vivas:0,cortes:0,vCampo:0,eCampo:0,vMadre:0,eMadre:0,madres:0,ult:''};
-    uni[k].vivas+=a.viva+a.resem; uni[k].cortes+=a.cortes; uni[k].vCampo+=a.varetas;
+    uni[k].vivas+=a.viva+a.resem+a.desarrollo; uni[k].cortes+=a.cortes; uni[k].vCampo+=a.varetas;
     if(a.ult>uni[k].ult) uni[k].ult=a.ult; });
   Object.keys(data.puntos).forEach(id=>{ const [sx,px]=id.split('-').map(Number);
     const k=normClon(clonForPoint(sx,px)); if(uni[k]) uni[k].eCampo+=estacasPt(data.puntos[id]); });
@@ -2244,11 +2352,12 @@ function abrirLote(id){
   if(ji){
     const bl=num(l.b_tunel), tot=num(l.j_tunel)+bl;
     ji.innerHTML = tieneDetalleJ(l)
-      ? `Jiffis: <b>${j7cDe(l)+jcDe(l)}</b> (${j7cDe(l)} J7c + ${jcDe(l)} Jc) · Bolsas: <b>${bl}</b> · Total de recipientes: <b>${tot}</b>`
+      ? `Bolsas: <b>${bl}</b> · Jiffis: <b>${j7cDe(l)+jcDe(l)}</b> (${j7cDe(l)} J7c + ${jcDe(l)} Jc) · Total de recipientes: <b>${tot}</b>`
       : (num(l.j_tunel)>0
           ? `Este lote se registró antes, con <b>${num(l.j_tunel)} jiffis</b> en total y sin separar J7c de Jc. Bolsas: <b>${bl}</b>. Si escribes el detalle, se guarda.`
           : (bl>0 ? `Sin jiffis · Bolsas: <b>${bl}</b>` : 'Sin jiffis ni bolsas registrados.'));
   }
+  ['lc-j7c','lc-jc','lc-bolsa','lc-nota','lc-f'].forEach(k=>{const e=document.getElementById(k); if(e)e.value='';});
   set('l-btunel',l.b_tunel); set('l-epb',l.epb||1); set('l-fce',l.f_ce); set('l-jce',l.j_ce);
   set('l-fpolis',l.f_polis); set('l-ppolis',l.p_polis); set('l-fcampo',l.f_campo); set('l-pcampo',l.p_campo);
   set('l-lote',l.lote_destino); set('l-resp',l.resp); set('l-nota',l.nota);
@@ -2276,7 +2385,7 @@ function listaConteos(l){
     const l2=data.lotes.find(x=>x.id===loteId); if(!l2)return;
     const c=cs[+b.dataset.delcon];
     l2.conteos=conteosDe(l2).filter(x=>x!==c);
-    sucioLote(l2.id); listaConteos(l2); renderVivero(); toast('Conteo eliminado');
+    sucioLote(l2.id); listaConteos(l2); renderViv(); toast('Conteo eliminado');
   }));
 }
 function cerrarLote(){ document.getElementById('loteDrawer').classList.remove('open');
@@ -2295,7 +2404,8 @@ document.getElementById('lc-add').addEventListener('click',()=>{
   ['lc-j7c','lc-jc','lc-bolsa','lc-nota','lc-f'].forEach(k=>document.getElementById(k).value='');
   const et=(ETAPAS.find(e=>e[0]===etapa)||[,etapa])[1];
   logEvent('conteo',null,`Clon ${l.clon} · ${et}: ${j7c+jc+bolsa} vivas (${fmtF(f)})`,'vivero');
-  listaConteos(l); renderVivero(); renderLog(); toast('Conteo registrado');
+  ['lc-j7c','lc-jc','lc-bolsa','lc-nota','lc-f'].forEach(k=>{const e=document.getElementById(k); if(e)e.value='';});
+  listaConteos(l); renderViv(); renderLog(); toast('Conteo registrado');
 });
 document.getElementById('l-save').addEventListener('click',async()=>{
   const l=data.lotes.find(x=>x.id===loteId); if(!l)return;
@@ -2595,8 +2705,8 @@ function abrirPunto(s,p){
   document.getElementById('d-head').style.borderLeftColor=cfg.colores[pt.estado]||'var(--accent)';
   document.querySelectorAll('#d-estados button').forEach(b=>b.classList.toggle('sel',b.dataset.e===pt.estado));
   document.getElementById('d-fecha').value=pt.fecha||'';
-  document.getElementById('d-fecha-resiembra').value='';
-  document.getElementById('d-fvareta').value=''; document.getElementById('d-nvareta').value='';
+  /* las casillas de captura siempre nacen vacías, para no arrastrar el registro anterior */
+  ['d-fecha-resiembra','d-fvareta','d-nvareta','d-nestacas','d-ffruto','d-verdes','d-secos'].forEach(k=>{const e=document.getElementById(k); if(e)e.value='';});
   document.getElementById('d-nota').value=pt.nota||'';
   document.getElementById('d-grupo').value=pt.grupo||'';
   llenarSelects(); document.getElementById('d-ensayo').value=pt.ensayo||'';
@@ -2743,7 +2853,7 @@ document.getElementById('d-fruto').addEventListener('click',()=>{
   toast('Verificación registrada');
 });
 document.getElementById('es-f-hoy').addEventListener('click',()=>{document.getElementById('es-f').value=today();});
-document.getElementById('es-buscar').addEventListener('click',buscarCortes);
+document.getElementById('es-buscar').addEventListener('click',()=>{ esBloqueado=false; buscarCortes(); });
 document.getElementById('cm-add').addEventListener('click',()=>{
   const c=(document.getElementById('cm-codigo').value||'').trim();
   if(!c){ toast('Escribe el código de la madre',true); return; }
@@ -2817,6 +2927,14 @@ document.getElementById('grid').addEventListener('pointerover',e=>{
   resaltar(+el.dataset.s,+el.dataset.p,false); });
 document.getElementById('grid').addEventListener('pointerleave',()=>{ if(!current) limpiarHl(); });
 document.getElementById('grid').addEventListener('click',e=>{
+  /* tocar el nombre de un clon resalta sus puntos; tocarlo otra vez lo quita */
+  const badge=e.target.closest('[data-cl]');
+  if(badge){ e.stopPropagation();
+    const c=String(badge.dataset.cl);
+    clonSel = (clonSel===c) ? null : c;
+    renderMapa();
+    toast(clonSel?('Resaltando el clon '+clonSel+' · toca otra vez para quitar'):'Resaltado quitado');
+    return; }
   const head=e.target.closest('[data-goto]');
   if(head){ soloSurco=+head.dataset.goto; llenarSelects(); renderMapa(); return; }
   const el=e.target.closest('.pt'); if(!el)return;
@@ -2844,7 +2962,7 @@ function snapEnsayo(nombre){
     const gr=pt.grupo||'Tratamiento';
     g[gr]=g[gr]||{puntos:0,vivas:0,muertas:0,resem:0,vacias:0,varetas:0,clones:{}};
     const o=g[gr]; o.puntos++;
-    if(pt.estado==='viva')o.vivas++; else if(pt.estado==='resem'){o.vivas++;o.resem++;}
+    if(pt.estado==='viva'||pt.estado==='desarrollo')o.vivas++; else if(pt.estado==='resem'){o.vivas++;o.resem++;}
     else if(pt.estado==='muerta')o.muertas++; else o.vacias++;
     (pt.cosechas||[]).forEach(c=>o.varetas+=num(c.n));
     const cl=clonForPoint(s,p); if(cl) o.clones[cl]=(o.clones[cl]||0)+1;
@@ -3221,9 +3339,9 @@ document.getElementById('add-surco').addEventListener('click',()=>{
   const n=cfgTmp.surcos.length?Math.max(...cfgTmp.surcos.map(s=>s.n))+1:0;
   cfgTmp.surcos.push({n,total:25,asign:[{clon:'',r:'1-25'}]}); renderSurcoList(); });
 function renderColorGrid(){
-  const et=[['viva','Viva'],['resem','Resembrada'],['muerta','Muerta'],['vacia','Vacía']];
+  const et=[['desarrollo','En desarrollo'],['viva','Viva'],['resem','Resembrada'],['muerta','Muerta'],['vacia','Vacía']];
   document.getElementById('color-grid').innerHTML=et.map(([k,l])=>
-    `<div><label>${l}</label><input type="color" data-col="${k}" value="${cfgTmp.colores[k]}"></div>`).join('');
+    `<div><label>${l}</label><input type="color" data-col="${k}" value="${cfgTmp.colores[k]||'#3fa64a'}"></div>`).join('');
   document.querySelectorAll('[data-col]').forEach(i=>i.addEventListener('input',e=>{ cfgTmp.colores[e.target.dataset.col]=e.target.value; }));
 }
 document.getElementById('cfg-pt').addEventListener('input',e=>{
@@ -3288,6 +3406,21 @@ function exportar(que){
     :que==='campo'?`Copia de Investigación 6 · ${n} puntos`
     :`Copia completa · ${data.lotes.length} lotes y ${n} puntos`);
 }
+document.getElementById('btn-todas-des').addEventListener('click',()=>{
+  const ids=Object.keys(data.puntos).filter(id=>data.puntos[id].estado==='viva');
+  if(!ids.length){ toast('No quedan plantas en "viva": todas ya están en desarrollo'); return; }
+  /* muestra de qué clones son, para que se vea qué se va a cambiar */
+  const porClon={};
+  ids.forEach(id=>{ const [sx,px]=id.split('-').map(Number);
+    const c=clonForPoint(sx,px)||'sin clon'; porClon[c]=(porClon[c]||0)+1; });
+  const det=Object.keys(porClon).map(c=>`  · ${c==='sin clon'?c:'Clon '+c}: ${porClon[c]}`).join('\n');
+  if(!confirm(`¿Marcar ${ids.length} planta(s) viva(s) como "en desarrollo"?\n\n${det}\n\n`+
+      `Quedarán en verde en el mapa. Los totales de vivas y la supervivencia no cambian.`)) return;
+  ids.forEach(id=>{ data.puntos[id].estado='desarrollo'; pend.pts[id]=true; });
+  logEvent('estado',null,`${ids.length} planta(s) viva(s) pasaron a "en desarrollo"`);
+  guardarLocal(); flush(); renderAll();
+  toast(`${ids.length} plantas quedaron en verde`);
+});
 document.getElementById('btn-export').addEventListener('click',()=>exportar('todo'));
 document.getElementById('btn-export-viv').addEventListener('click',()=>exportar('vivero'));
 document.getElementById('btn-export-campo').addEventListener('click',()=>exportar('campo'));
@@ -3398,12 +3531,12 @@ function repViv(tipo){
   if(tipo==='apodandra'){
     const ls=data.lotes.filter(esApo), a=totalesViv(ls);
     const rows=ls.sort((x,y)=>String(y.f_tunel||'').localeCompare(String(x.f_tunel||''))).map(l=>
-      [fmtF(l.f_tunel),j7cTxt(l),jcTxt(l),num(l.j_tunel),num(l.b_tunel),contDe(l),ET_LABEL[etapaDe(l)],l.j_ce||'—',l.p_polis||'—',
+      [fmtF(l.f_tunel),num(l.b_tunel),j7cTxt(l),jcTxt(l),num(l.j_tunel),contDe(l),ET_LABEL[etapaDe(l)],l.j_ce||'—',l.p_polis||'—',
        l.p_campo||'—',l.lote_destino||'—',pctTxt(num(l.j_ce),contDe(l)),l.resp||'—']);
     return {titulo:'Producción de patrones — Apodandra',meta,
       kpis:[['Lotes',a.lotes],['Contenedores',a.cont],['Prendimiento',pctTxt(a.jCE,a.cont)],
         ['Disponibles hoy',a.disponibles],['En campo',a.pCampo],['Rendimiento total',pctTxt(a.pCampo,a.cont)]],
-      tablas:[{cols:['F. túnel','Jiffis J7c','Jiffis Jc','Jiffis total','Bolsas','Contenedores','Etapa','A endurec.','A polis.','A campo','Lote destino','% prend.','Responsable'],rows}]};
+      tablas:[{cols:['F. túnel','Bolsas','Jiffis J7c','Jiffis Jc','Jiffis total','Contenedores','Etapa','A endurec.','A polis.','A campo','Lote destino','% prend.','Responsable'],rows}]};
   }
   if(tipo==='tipos'){
     const m={};
@@ -3453,8 +3586,8 @@ function repViv(tipo){
     const tit={lotes:'Todos los lotes',proceso:'Lotes en proceso',campo:'Lotes sembrados en campo'}[tipo];
     return {titulo:tit,meta,
       kpis: tipo==='campo'?[['Lotes',ls.length],['Plantas sembradas',ls.reduce((s,l)=>s+num(l.p_campo),0)]]:[['Lotes',ls.length]],
-      tablas:[{cols:['Clon','Tipo','Etapa','F. túnel','Jiffis J7c','Jiffis Jc','Jiffis total','Bolsas','Contenedores','F. C.E.','Pasaron','F. polis.','Pasaron','F. campo','Sembradas','Lote destino','% prend.','% total','Ensayo','Responsable'],
-        rows:ls.map(l=>['Clon '+l.clon,tipoDe(l),ET_LABEL[etapaDe(l)],fmtF(l.f_tunel),j7cTxt(l),jcTxt(l),num(l.j_tunel),num(l.b_tunel),contDe(l),
+      tablas:[{cols:['Clon','Tipo','Etapa','F. túnel','Bolsas','Jiffis J7c','Jiffis Jc','Jiffis total','Contenedores','F. C.E.','Pasaron','F. polis.','Pasaron','F. campo','Sembradas','Lote destino','% prend.','% total','Ensayo','Responsable'],
+        rows:ls.map(l=>['Clon '+l.clon,tipoDe(l),ET_LABEL[etapaDe(l)],fmtF(l.f_tunel),num(l.b_tunel),j7cTxt(l),jcTxt(l),num(l.j_tunel),contDe(l),
           fmtF(l.f_ce),l.j_ce||'—',fmtF(l.f_polis),l.p_polis||'—',fmtF(l.f_campo),l.p_campo||'—',l.lote_destino||'—',
           pctTxt(num(l.j_ce),contDe(l)),pctTxt(num(l.p_campo),contDe(l)),l.ensayo||'—',l.resp||'—'])}]};
   }
@@ -3480,7 +3613,7 @@ function repCampo(tipo){
   if(tipo==='vivas'){
     let tot=0,cv=0;
     const rows=Object.keys(agg).sort((a,b)=>(+a||99)-(+b||99)).map(cl=>{
-      const v=agg[cl].viva+agg[cl].resem; tot+=v; if(v>0)cv++; return ['Clon '+cl,v]; });
+      const v=agg[cl].viva+agg[cl].resem+agg[cl].desarrollo; tot+=v; if(v>0)cv++; return ['Clon '+cl,v]; });
     return {titulo:'Clon y plantas vivas',meta,kpis:[['Total plantas vivas',tot],['Clones vivos',cv]],
       tablas:[{cols:['Clon','Plantas vivas'],rows}]};
   }
@@ -3495,15 +3628,25 @@ function repCampo(tipo){
           return [m.nombre||('Clon '+m.codigo),m.ubicacion||'—',t.frutos,t.varetas,t.estacas,
             fmtF(u),u?diasDesde(u)+' días':'—',(m.registros||[]).length]; })}]};
   }
+  if(tipo==='desarrollo'){
+    const rows=[]; let n=0;
+    eachPunto((pt,s,p)=>{ if(pt.estado!=='desarrollo') return; n++;
+      rows.push(['Surco '+s,'Clon '+(clonForPoint(s,p)||'—'),'Punto '+p,fmtF(pt.fecha),esc(pt.nota||'—')]); });
+    return {titulo:'Plantas en desarrollo — ya prendidas',meta,
+      kpis:[['En desarrollo',n],['Vivas totales',c.vivas],['% ya prendidas',c.pctDes+'%'],
+        ['Falta por confirmar',Math.max(0,c.vivas-n)]],
+      tablas:[{cols:['Surco','Clon','Punto','Fecha de siembra','Nota'],rows}]};
+  }
   if(tipo==='clon') return {titulo:'Estado por clon',meta,kpis:[],
-    tablas:[{cols:['Clon','Puntos','Sembradas','Vivas','Resemb.','Muertas','Varetas','% superv.'],
-      rows:Object.keys(agg).sort((a,b)=>(+a||99)-(+b||99)).map(cl=>{ const a=agg[cl],v=a.viva+a.resem;
-        return ['Clon '+cl,a.puntos,a.semb,v,a.resem,a.muerta,a.varetas,((v+a.muerta)?Math.round(v/(v+a.muerta)*100):0)+'%']; })}]};
+    tablas:[{cols:['Clon','Puntos','Sembradas','Vivas','En desarrollo','% prendidas','Resemb.','Muertas','Varetas','% superv.'],
+      rows:Object.keys(agg).sort((a,b)=>(+a||99)-(+b||99)).map(cl=>{ const a=agg[cl],v=a.viva+a.resem+a.desarrollo;
+        return ['Clon '+cl,a.puntos,a.semb,v,a.desarrollo,(v?Math.round(a.desarrollo/v*100):0)+'%',
+          a.resem,a.muerta,a.varetas,((v+a.muerta)?Math.round(v/(v+a.muerta)*100):0)+'%']; })}]};
   if(tipo==='surco') return {titulo:'Estado por surco',meta,kpis:[],
     tablas:[{cols:['Surco','Clones y posiciones','Puntos','Sembradas','Vivas','Resemb.','Muertas','Varetas','% superv.'],
       rows:surcoNums().map(s=>{ let vi=0,re=0,mu=0,se=0,va=0;
         for(let p=1;p<=ptsDe(s);p++){ const pt=data.puntos[pkey(s,p)]; if(!pt)continue;
-          if(pt.estado==='viva')vi++;else if(pt.estado==='resem')re++;else if(pt.estado==='muerta')mu++;
+          if(pt.estado==='viva'||pt.estado==='desarrollo')vi++;else if(pt.estado==='resem')re++;else if(pt.estado==='muerta')mu++;
           if(esSembrado(pt))se++; (pt.cosechas||[]).forEach(x=>va+=num(x.n)); }
         const v=vi+re; return ['Surco '+s,detalleSurco(s)||'—',ptsDe(s),se,v,re,mu,va,((v+mu)?Math.round(v/(v+mu)*100):0)+'%']; })}]};
   if(tipo==='varetas'){
