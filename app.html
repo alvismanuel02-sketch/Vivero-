@@ -362,6 +362,11 @@
           <div class="scroll"><table id="disp-table"></table></div>
         </div>
         <div class="card">
+          <h2>Prendimiento por recipiente <span class="sm">(en cada paso de etapa)</span></h2>
+          <p class="hint">Compara cuántos entraron a una etapa y cuántos pasaron a la siguiente, por tipo de recipiente. Solo cuenta los lotes que tengan el detalle registrado en ambos extremos.</p>
+          <div class="scroll"><table id="prend-table"></table></div>
+        </div>
+        <div class="card">
           <h2>Lotes que deben pasar de etapa</h2>
           <p class="hint">Túnel 3 semanas · casa de endurecimiento 1 semana · polisombra 2 semanas.</p>
           <div class="kpis" id="pase-kpis"></div>
@@ -503,6 +508,7 @@
             <button class="btn ghost" data-repv="tipos">Por tipo de material</button>
             <button class="btn ghost" data-repv="clon">Desempeño por clon</button>
             <button class="btn ghost" data-repv="dispo">Disponibilidad por etapa</button>
+            <button class="btn ghost" data-repv="prend">Prendimiento por recipiente</button>
             <button class="btn ghost" data-repv="recip">Recipiente por clon</button>
             <button class="btn ghost" data-repv="embudo">Del vivero al campo</button>
             <button class="btn ghost" data-repv="lotes">Todos los lotes</button>
@@ -790,19 +796,40 @@
     <h4><span class="fdot" style="background:var(--endure)"></span>Casa de endurecimiento</h4>
     <div class="field"><label>Fecha de entrada</label>
       <div class="date-row"><input type="date" id="l-fce"><button class="btn ghost btn-hoy" data-hoy="l-fce">Hoy</button></div></div>
-    <div class="field"><label>Cuántos pasaron</label><input type="number" id="l-jce" min="0"></div>
+    <div class="grid g2">
+      <div><label>Bolsas</label><input type="number" id="l-ce-bolsa" min="0" placeholder="0"></div>
+      <div><label>Jiffis J7c</label><input type="number" id="l-ce-j7c" min="0" placeholder="0"></div>
+      <div><label>Jiffis Jc</label><input type="number" id="l-ce-jc" min="0" placeholder="0"></div>
+    </div>
+    <div class="field"><label>Cuántos pasaron <span class="sm">(total)</span></label>
+      <input type="number" id="l-jce" min="0"></div>
+    <div class="sinfo" id="l-ce-info" style="margin:-4px 0 2px"></div>
   </div>
   <div class="stage-block">
     <h4><span class="fdot" style="background:var(--polis)"></span>Polisombra</h4>
     <div class="field"><label>Fecha de entrada</label>
       <div class="date-row"><input type="date" id="l-fpolis"><button class="btn ghost btn-hoy" data-hoy="l-fpolis">Hoy</button></div></div>
-    <div class="field"><label>Plantas que pasaron</label><input type="number" id="l-ppolis" min="0"></div>
+    <div class="grid g2">
+      <div><label>Bolsas</label><input type="number" id="l-polis-bolsa" min="0" placeholder="0"></div>
+      <div><label>Jiffis J7c</label><input type="number" id="l-polis-j7c" min="0" placeholder="0"></div>
+      <div><label>Jiffis Jc</label><input type="number" id="l-polis-jc" min="0" placeholder="0"></div>
+    </div>
+    <div class="field"><label>Plantas que pasaron <span class="sm">(total)</span></label>
+      <input type="number" id="l-ppolis" min="0"></div>
+    <div class="sinfo" id="l-polis-info" style="margin:-4px 0 2px"></div>
   </div>
   <div class="stage-block">
     <h4><span class="fdot" style="background:var(--campo)"></span>Campo</h4>
     <div class="field"><label>Fecha de siembra</label>
       <div class="date-row"><input type="date" id="l-fcampo"><button class="btn ghost btn-hoy" data-hoy="l-fcampo">Hoy</button></div></div>
-    <div class="field"><label>Plantas sembradas</label><input type="number" id="l-pcampo" min="0"></div>
+    <div class="grid g2">
+      <div><label>Bolsas</label><input type="number" id="l-campo-bolsa" min="0" placeholder="0"></div>
+      <div><label>Jiffis J7c</label><input type="number" id="l-campo-j7c" min="0" placeholder="0"></div>
+      <div><label>Jiffis Jc</label><input type="number" id="l-campo-jc" min="0" placeholder="0"></div>
+    </div>
+    <div class="field"><label>Plantas sembradas <span class="sm">(total)</span></label>
+      <input type="number" id="l-pcampo" min="0"></div>
+    <div class="sinfo" id="l-campo-info" style="margin:-4px 0 2px"></div>
     <div class="field"><label>Lote de destino</label><input type="text" id="l-lote" placeholder="Investigación 6"></div>
   </div>
   <div class="field"><label>Responsable</label><input type="text" id="l-resp"></div>
@@ -1097,6 +1124,32 @@ function opcionesClon(sel){
 const contDe=l=>num(l.j_tunel)+num(l.b_tunel);
 /* J7c y Jc por separado. Los lotes viejos solo guardaron la suma en j_tunel:
    en ese caso se muestra la suma y no se inventa el reparto. */
+/* recipientes que entraron a cada etapa. 'ini' = túnel (la entrada inicial) */
+const ETAPA_KEYS={ini:['ini_bolsa','ini_j7c','ini_jc'],
+                  ce:['ce_bolsa','ce_j7c','ce_jc'],
+                  polis:['polis_bolsa','polis_j7c','polis_jc'],
+                  campo:['campo_bolsa','campo_j7c','campo_jc']};
+const recipEtapa=(l,e)=>{ const k=ETAPA_KEYS[e]||[];
+  return {bolsa:num(l[k[0]]), j7c:num(l[k[1]]), jc:num(l[k[2]])}; };
+const totRecip=r=>r.bolsa+r.j7c+r.jc;
+const tieneRecipEtapa=(l,e)=>totRecip(recipEtapa(l,e))>0;
+/* el total real de cada etapa: el detalle si existe, si no el campo suelto */
+const totEtapa=(l,e)=>{
+  if(tieneRecipEtapa(l,e)) return totRecip(recipEtapa(l,e));
+  return num({ini:l.j_tunel!==undefined?num(l.j_tunel)+num(l.b_tunel):0,
+              ce:l.j_ce, polis:l.p_polis, campo:l.p_campo}[e]);
+};
+function pintarInfoEtapa(l,e){
+  const el=document.getElementById('l-'+e+'-info'); if(!el) return;
+  const g=id=>(document.getElementById(id)||{}).value||'';
+  const b=num(g('l-'+e+'-bolsa')), s7=num(g('l-'+e+'-j7c')), sc=num(g('l-'+e+'-jc'));
+  const t=b+s7+sc;
+  if(!t){ el.innerHTML='<span class="sm">Si escribes el detalle por recipiente, el total se calcula solo.</span>'; return; }
+  const ini=totEtapa(l,'ini');
+  const pct=ini?Math.round(t/ini*100):0;
+  el.innerHTML=`Total: <b>${t}</b> (${b} bolsas + ${s7} J7c + ${sc} Jc)`+
+    (ini?` · ${pct}% de los ${ini} que entraron al túnel`:'');
+}
 const j7cDe=l=>num(l.ini_j7c);
 const jcDe =l=>num(l.ini_jc);
 const tieneDetalleJ=l=>(num(l.ini_j7c)+num(l.ini_jc))>0;
@@ -1206,7 +1259,10 @@ const sheet={
     else if(action==='saveLotes'){
       const rows=(payload||[]).map(l=>Object.assign({},l,{
         conteos: typeof l.conteos==='string'? l.conteos : JSON.stringify(l.conteos||[]),
-        ini_j7c:num(l.ini_j7c), ini_jc:num(l.ini_jc), ini_bolsa:num(l.ini_bolsa)}));
+        ini_j7c:num(l.ini_j7c), ini_jc:num(l.ini_jc), ini_bolsa:num(l.ini_bolsa),
+        ce_bolsa:num(l.ce_bolsa), ce_j7c:num(l.ce_j7c), ce_jc:num(l.ce_jc),
+        polis_bolsa:num(l.polis_bolsa), polis_j7c:num(l.polis_j7c), polis_jc:num(l.polis_jc),
+        campo_bolsa:num(l.campo_bolsa), campo_j7c:num(l.campo_j7c), campo_jc:num(l.campo_jc)}));
       res=await sb.from('lotes').upsert(rows,{onConflict:'id'});
     }
     else if(action==='saveEnsVivero') res=await sb.from('ensayos_vivero').upsert(payload||[],{onConflict:'nombre'});
@@ -1592,6 +1648,46 @@ function dispoPorClon(){
 }
 const dispoTotal=()=>dispoPorClon().reduce((t,r)=>({tunel:t.tunel+r.tunel,ce:t.ce+r.ce,polis:t.polis+r.polis,
   j7c:t.j7c+r.j7c,jc:t.jc+r.jc,bolsa:t.bolsa+r.bolsa}),{tunel:0,ce:0,polis:0,j7c:0,jc:0,bolsa:0});
+/* Prendimiento por recipiente en cada paso de etapa.
+   Compara lo que ENTRÓ a una etapa contra lo que PASÓ a la siguiente. */
+const PASOS=[['ini','ce','Túnel → Endurecimiento'],
+             ['ce','polis','Endurecimiento → Polisombra'],
+             ['polis','campo','Polisombra → Campo']];
+function prendPorRecip(){
+  const filas=[];
+  PASOS.forEach(([de,a,nombre])=>{
+    const acc={bolsa:{ent:0,sal:0},j7c:{ent:0,sal:0},jc:{ent:0,sal:0}};
+    let lotes=0;
+    data.lotes.forEach(l=>{
+      /* solo cuenta si AMBOS extremos tienen el detalle: si no, el % mentiría */
+      if(!tieneRecipEtapa(l,de) || !tieneRecipEtapa(l,a)) return;
+      const r1=recipEtapa(l,de), r2=recipEtapa(l,a); lotes++;
+      RECIP.forEach(([k])=>{ acc[k].ent+=r1[k]; acc[k].sal+=r2[k]; });
+    });
+    if(!lotes) return;
+    const tasa={}; let mejor=null,mejorV=-1;
+    RECIP.forEach(([k])=>{ tasa[k]= acc[k].ent>0 ? Math.round(acc[k].sal/acc[k].ent*100) : null;
+      if(tasa[k]!==null && tasa[k]>mejorV){ mejorV=tasa[k]; mejor=k; } });
+    filas.push({paso:nombre,lotes,acc,tasa,mejor,mejorV:mejor?mejorV:null});
+  });
+  return filas;
+}
+function renderPrendRecip(){
+  const el=document.getElementById('prend-table'); if(!el) return;
+  const fs=prendPorRecip();
+  el.innerHTML= fs.length
+    ? '<thead><tr><th>Paso de etapa</th><th>Lotes</th>'+
+      RECIP.map(([,n])=>`<th>${n}<br><span class="sm">entraron → pasaron</span></th>`).join('')+
+      RECIP.map(([,n])=>`<th>% ${n}</th>`).join('')+'<th>Mejor</th></tr></thead><tbody>'+
+      fs.map(f=>`<tr><td><b>${esc(f.paso)}</b></td><td>${f.lotes}</td>`+
+        RECIP.map(([k])=>`<td>${f.acc[k].ent?f.acc[k].ent+' → '+f.acc[k].sal:'<span class="sm">—</span>'}</td>`).join('')+
+        RECIP.map(([k])=>`<td>${f.tasa[k]===null?'<span class="sm">—</span>':
+          `<b style="color:${f.mejor===k?'var(--desarrollo)':'inherit'}">${f.tasa[k]}%</b>`}</td>`).join('')+
+        `<td>${f.mejor?`<span class="chip">${esc(nomRecip(f.mejor))} · ${f.mejorV}%</span>`:'<span class="sm">—</span>'}</td></tr>`).join('')+
+      '</tbody>'
+    : '<tbody><tr><td><div class="empty"><b>Sin datos suficientes</b>'+
+      'Registra bolsas, J7c y Jc en la entrada al túnel y en la etapa siguiente de un mismo lote.</div></td></tr></tbody>';
+}
 /* ¿qué recipiente le fue mejor a cada clon? compara lo que entró vs lo que sigue vivo */
 function recipPorClon(){
   const m={};
@@ -1699,7 +1795,7 @@ function renderViv(){
       tr.map(r=>`<tr><td><b>${esc(r.tipo)}</b></td><td>${r.lotes}</td><td>${r.proc}</td><td>${r.cont.toLocaleString('es-CO')}</td>
         <td>${pctTxt(r.jCE,r.cont)}</td><td>${r.pCampo.toLocaleString('es-CO')}</td><td>${pctTxt(r.pCampo,r.cont)}</td></tr>`).join('')+'</tbody>'
     : '<tbody><tr><td><div class="empty"><b>Sin datos</b>Registra lotes para ver el desglose.</div></td></tr></tbody>';
-  renderRecipClon(); renderDispo(); renderPaseEtapa();
+  renderRecipClon(); renderDispo(); renderPaseEtapa(); renderPrendRecip();
 }
 /* ¿qué recipiente le fue mejor a cada clon? */
 function renderRecipClon(){
@@ -2360,6 +2456,12 @@ function abrirLote(id){
   ['lc-j7c','lc-jc','lc-bolsa','lc-nota','lc-f'].forEach(k=>{const e=document.getElementById(k); if(e)e.value='';});
   set('l-btunel',l.b_tunel); set('l-epb',l.epb||1); set('l-fce',l.f_ce); set('l-jce',l.j_ce);
   set('l-fpolis',l.f_polis); set('l-ppolis',l.p_polis); set('l-fcampo',l.f_campo); set('l-pcampo',l.p_campo);
+  /* recipientes de cada etapa */
+  ['ce','polis','campo'].forEach(e=>{
+    const r=recipEtapa(l,e);
+    set('l-'+e+'-bolsa', r.bolsa||''); set('l-'+e+'-j7c', r.j7c||''); set('l-'+e+'-jc', r.jc||'');
+    pintarInfoEtapa(l,e);
+  });
   set('l-lote',l.lote_destino); set('l-resp',l.resp); set('l-nota',l.nota);
   document.getElementById('l-tipo').value=tipoDe(l);
   llenarSelects(); document.getElementById('l-ensayo').value=l.ensayo||'';
@@ -2417,9 +2519,18 @@ document.getElementById('l-save').addEventListener('click',async()=>{
   else if(tieneDetalleJ(l)){ l.ini_j7c=0; l.ini_jc=0; l.j_tunel=0; }
   /* si es un lote viejo sin detalle y no escribió nada, se conserva su total */
   l.b_tunel=num(g('l-btunel')); l.epb=num(g('l-epb'))||1;
-  l.f_ce=g('l-fce'); l.j_ce=g('l-jce')===''?'':num(g('l-jce'));
-  l.f_polis=g('l-fpolis'); l.p_polis=g('l-ppolis')===''?'':num(g('l-ppolis'));
-  l.f_campo=g('l-fcampo'); l.p_campo=g('l-pcampo')===''?'':num(g('l-pcampo'));
+  l.f_ce=g('l-fce'); l.f_polis=g('l-fpolis'); l.f_campo=g('l-fcampo');
+  /* recipientes por etapa; si hay detalle, el total se recalcula solo */
+  const totCampoDe={ce:'l-jce', polis:'l-ppolis', campo:'l-pcampo'};
+  ['ce','polis','campo'].forEach(e=>{
+    const k=ETAPA_KEYS[e];
+    const b=num(g('l-'+e+'-bolsa')), s7=num(g('l-'+e+'-j7c')), sc=num(g('l-'+e+'-jc'));
+    const suelto=g(totCampoDe[e]);
+    if(b+s7+sc>0){ l[k[0]]=b; l[k[1]]=s7; l[k[2]]=sc;
+      l[{ce:'j_ce',polis:'p_polis',campo:'p_campo'}[e]] = b+s7+sc; }
+    else { l[k[0]]=0; l[k[1]]=0; l[k[2]]=0;
+      l[{ce:'j_ce',polis:'p_polis',campo:'p_campo'}[e]] = suelto===''?'':num(suelto); }
+  });
   l.lote_destino=g('l-lote').trim(); l.resp=g('l-resp').trim();
   l.ensayo=g('l-ensayo'); l.nota=g('l-nota').trim();
   sucioLote(l.id); renderAll(); cerrarLote(); toast('Cambios guardados');
@@ -2437,6 +2548,20 @@ async function borrarLote(id){
   if(typeof loteId!=='undefined' && loteId===id) cerrarLote();
   toast('Lote borrado');
 }
+/* al escribir un recipiente, actualizar el total y el aviso */
+['ce','polis','campo'].forEach(e=>{
+  ['bolsa','j7c','jc'].forEach(k=>{
+    const el=document.getElementById('l-'+e+'-'+k);
+    if(el) el.addEventListener('input',()=>{
+      const g=id=>(document.getElementById(id)||{}).value||'';
+      const t=num(g('l-'+e+'-bolsa'))+num(g('l-'+e+'-j7c'))+num(g('l-'+e+'-jc'));
+      const tot=document.getElementById({ce:'l-jce',polis:'l-ppolis',campo:'l-pcampo'}[e]);
+      if(tot && t>0) tot.value=t;
+      const l=data.lotes.find(x=>x.id===loteId);
+      if(l) pintarInfoEtapa(l,e);
+    });
+  });
+});
 document.getElementById('l-clon-sel').addEventListener('change',e=>{
   const otro=document.getElementById('l-clon'), v=e.target.value;
   if(v==='__otro'){ otro.style.display=''; otro.value=''; otro.focus(); }
@@ -3555,6 +3680,18 @@ function repViv(tipo){
         ['Total disponible',t.tunel+t.ce+t.polis],['Jiffis J7c',t.j7c],['Jiffis Jc',t.jc],['Bolsas',t.bolsa]],
       tablas:[{cols:['Clon','Lotes','Túnel','C. endurec.','Polisombra','Total','J7c','Jc','Bolsas','Último conteo'],
         rows:rs.map(r=>['Clon '+r.clon,r.lotes,r.tunel,r.ce,r.polis,r.tunel+r.ce+r.polis,r.j7c,r.jc,r.bolsa,fmtF(r.ult)])}]};
+  }
+  if(tipo==='prend'){
+    const fs=prendPorRecip();
+    return {titulo:'Prendimiento por recipiente',meta,
+      kpis:fs.length?fs.map(f=>[f.paso, f.mejor?(nomRecip(f.mejor)+' '+f.mejorV+'%'):'—']):[['Sin datos','—']],
+      tablas:[{cols:['Paso de etapa','Lotes'].concat(RECIP.map(([,n])=>n+' entraron'))
+        .concat(RECIP.map(([,n])=>n+' pasaron')).concat(RECIP.map(([,n])=>'% '+n)).concat(['Mejor']),
+        rows:fs.map(f=>[f.paso,f.lotes]
+          .concat(RECIP.map(([k])=>f.acc[k].ent))
+          .concat(RECIP.map(([k])=>f.acc[k].sal))
+          .concat(RECIP.map(([k])=>f.tasa[k]===null?'—':f.tasa[k]+'%'))
+          .concat([f.mejor?nomRecip(f.mejor):'—']))}]};
   }
   if(tipo==='recip'){
     const rs=recipPorClon();
