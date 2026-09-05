@@ -275,6 +275,42 @@
   .toast.err{background:var(--alerta);color:#fff}
   .toast button{background:rgba(0,0,0,.22);border:none;color:inherit;padding:5px 11px;border-radius:6px;cursor:pointer;font-weight:700;font-size:12px}
 
+  /* tarjetas plegables */
+  .card.fold > h2{cursor:pointer;display:flex;align-items:center;gap:8px;user-select:none}
+  .card.fold > h2::before{content:'▸';font-size:13px;color:var(--accent);transition:transform .15s}
+  .card.fold.open > h2::before{transform:rotate(90deg)}
+  .card.fold .fold-body{display:none}
+  .card.fold.open .fold-body{display:block}
+  .card.fold .fold-sum{font-size:12px;color:var(--muted);margin:-4px 0 2px;padding-left:20px}
+  .card.fold.open .fold-sum{display:none}
+  /* registrar (se escribe) vs consultar (se lee) */
+  .card.escribir{border-left:3px solid var(--accent)}
+  .card.escribir > h2::after{content:'registrar';font-size:10px;font-weight:400;letter-spacing:.5px;
+    text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);
+    border-radius:9px;padding:1px 7px;margin-left:auto;opacity:.75}
+  .card.leer > h2{display:flex;align-items:center;gap:8px}
+  .card.leer > h2::after{content:'consultar';font-size:10px;font-weight:400;letter-spacing:.5px;
+    text-transform:uppercase;color:var(--muted);border:1px solid var(--line);
+    border-radius:9px;padding:1px 7px;margin-left:auto;opacity:.6}
+  .rep-grupo{margin-bottom:14px}
+  .rep-grupo > h4{font-size:11px;letter-spacing:1.1px;text-transform:uppercase;color:var(--accent);
+    margin:0 0 7px;font-weight:600}
+  .rep-btns .btn{text-align:left;display:block;width:100%;margin-bottom:5px;line-height:1.3}
+  .rep-btns .btn small{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:2px}
+  /* filtro de clones */
+  .chips-cl{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 8px}
+  .chips-cl button{font-size:12px;padding:4px 11px;border-radius:14px;border:1px solid var(--line);
+    background:transparent;color:var(--muted);cursor:pointer}
+  .chips-cl button.on{border-color:var(--accent);color:var(--accent);background:rgba(212,175,95,.09)}
+  /* tareas de inicio */
+  .tarea{display:flex;align-items:center;gap:10px;padding:11px 4px;border-bottom:1px solid var(--line);
+    cursor:pointer}
+  .tarea:last-child{border-bottom:none}
+  .tarea .ic{font-size:17px;width:22px;text-align:center;flex:none}
+  .tarea .tx{flex:1;font-size:14px;line-height:1.35}
+  .tarea .tx b{color:var(--fg)}
+  .tarea .go{color:var(--accent);font-size:15px;flex:none}
+  .tarea.ok{cursor:default} .tarea.ok .go{display:none}
   .pt{position:relative}
   .clon-badge.sel{outline:2px solid var(--accent);outline-offset:1px}
   .clon-badge[data-cl]{cursor:pointer}
@@ -333,7 +369,7 @@
       </div>
       <div class="kpis" id="inicio-kpis"></div>
       <div class="card">
-        <h2>Necesita atención</h2>
+        <h2>Qué hay que hacer hoy</h2>
         <div id="inicio-alertas"></div>
       </div>
     </section>
@@ -356,18 +392,19 @@
         </div>
         <div class="kpis" id="viv-kpis"></div>
         <div class="card">
-          <h2>Disponibilidad de plántulas <span class="sm">(vivas hoy, por etapa)</span></h2>
-          <p class="hint">Según el último conteo registrado de cada lote. Actualízalo cada semana desde la ficha del lote.</p>
+          <h2>Plántulas disponibles hoy</h2>
+          <p class="hint">Plantas vivas <b>hoy</b>. Cada lote cuenta una sola vez, en la etapa donde está ahora: si pasó a polisombra, ya no cuenta en túnel. Se usa su conteo semanal más reciente de esa etapa.</p>
           <div class="kpis" id="disp-kpis"></div>
+          <div class="chips-cl" id="disp-filtro"></div>
           <div class="scroll"><table id="disp-table"></table></div>
         </div>
         <div class="card">
-          <h2>Prendimiento por recipiente <span class="sm">(en cada paso de etapa)</span></h2>
+          <h2>¿Qué recipiente funciona mejor?</h2>
           <p class="hint">Compara cuántos entraron a una etapa y cuántos pasaron a la siguiente, por tipo de recipiente. Solo cuenta los lotes que tengan el detalle registrado en ambos extremos.</p>
           <div class="scroll"><table id="prend-table"></table></div>
         </div>
         <div class="card">
-          <h2>Lotes que deben pasar de etapa</h2>
+          <h2>Lotes listos para pasar de etapa</h2>
           <p class="hint">Túnel 3 semanas · casa de endurecimiento 1 semana · polisombra 2 semanas.</p>
           <div class="kpis" id="pase-kpis"></div>
           <div class="scroll"><table id="pase-table"></table></div>
@@ -396,7 +433,7 @@
           <div class="scroll"><table id="tipos-table"></table></div>
         </div>
         <div class="card">
-          <h2>Recipiente por clon <span class="sm">(cuál le funcionó mejor)</span></h2>
+          <h2>Mejor recipiente de cada clon <span class="sm">(cuál le funcionó mejor)</span></h2>
           <p class="hint">Compara cuántas entraron en cada recipiente contra cuántas siguen vivas.</p>
           <div class="scroll"><table id="recip-table"></table></div>
         </div>
@@ -503,19 +540,25 @@
         <div class="card no-print">
           <h2>Reportes del vivero</h2>
           <div class="rep-btns">
-            <button class="btn ghost" data-repv="general">Resumen general</button>
-            <button class="btn ghost" data-repv="apodandra">Patrones · Apodandra</button>
-            <button class="btn ghost" data-repv="tipos">Por tipo de material</button>
-            <button class="btn ghost" data-repv="clon">Desempeño por clon</button>
-            <button class="btn ghost" data-repv="dispo">Disponibilidad por etapa</button>
-            <button class="btn ghost" data-repv="prend">Prendimiento por recipiente</button>
-            <button class="btn ghost" data-repv="recip">Recipiente por clon</button>
-            <button class="btn ghost" data-repv="embudo">Del vivero al campo</button>
-            <button class="btn ghost" data-repv="lotes">Todos los lotes</button>
-            <button class="btn ghost" data-repv="proceso">Lotes en proceso</button>
-            <button class="btn ghost" data-repv="campo">Sembrado en campo</button>
-            <button class="btn ghost" data-repv="ensayos">Ensayos</button>
-            <button class="btn gold" data-repv="completo">Informe completo</button>
+            <div class="rep-grupo"><h4>Qué tengo ahora</h4>
+<button class="btn ghost" data-repv="dispo">Plántulas disponibles<small>Cuántas hay hoy en cada etapa, por clon</small></button>
+<button class="btn ghost" data-repv="proceso">Lotes en proceso<small>Los que siguen en el vivero y en qué etapa van</small></button>
+<button class="btn ghost" data-repv="lotes">Todos los lotes<small>Listado completo con fechas y cantidades</small></button>
+            </div>
+            <div class="rep-grupo"><h4>Cómo va la producción</h4>
+<button class="btn ghost" data-repv="general">Resumen general<small>Cifras principales del vivero</small></button>
+<button class="btn ghost" data-repv="embudo">Embudo de propagación<small>Cuántas se pierden en cada paso hasta el campo</small></button>
+<button class="btn ghost" data-repv="campo">Sembrado en campo<small>Lo que ya salió del vivero al lote</small></button>
+            </div>
+            <div class="rep-grupo"><h4>Qué funciona mejor</h4>
+<button class="btn ghost" data-repv="prend">¿Qué recipiente funciona mejor?<small>Compara bolsas, J7c y Jc en cada paso de etapa</small></button>
+<button class="btn ghost" data-repv="recip">Mejor recipiente de cada clon<small>Cuál le rinde más a cada clon</small></button>
+<button class="btn ghost" data-repv="clon">Desempeño por clon<small>Qué clon prende y sobrevive mejor</small></button>
+<button class="btn ghost" data-repv="tipos">Por tipo de material<small>Clon élite, injerto, patrón...</small></button>
+<button class="btn ghost" data-repv="apodandra">Patrones · Apodandra<small>Producción del patrón, aparte</small></button>
+<button class="btn ghost" data-repv="ensayos">Ensayos del vivero<small>Resultados de los ensayos registrados</small></button>
+            </div>
+            <button class="btn gold" data-repv="completo">Informe completo del vivero<small>Todo lo anterior en un solo documento</small></button>
           </div>
         </div>
         <div id="repv-output"></div>
@@ -621,7 +664,7 @@
           <div class="scroll"><table id="jc-table"></table></div>
         </div>
         <div class="card">
-          <h2>Listas para cosechar <span class="sm">(45 días o más desde el último corte)</span></h2>
+          <h2>Plantas madre listas para cortar <span class="sm">(45 días o más desde el último corte)</span></h2>
           <div id="jc-listas"></div>
         </div>
       </section>
@@ -683,17 +726,23 @@
         <div class="card no-print">
           <h2>Reportes del lote</h2>
           <div class="rep-btns">
-            <button class="btn ghost" data-repc="general">Resumen general</button>
-            <button class="btn ghost" data-repc="vivas">Clon · plantas vivas</button>
-            <button class="btn ghost" data-repc="clon">Estado por clon</button>
-            <button class="btn ghost" data-repc="surco">Estado por surco</button>
-            <button class="btn ghost" data-repc="desarrollo">En desarrollo</button>
-            <button class="btn ghost" data-repc="madres">Plantas madre</button>
-            <button class="btn ghost" data-repc="varetas">Cosecha de varetas</button>
-            <button class="btn ghost" data-repc="muertas">Plantas muertas</button>
-            <button class="btn ghost" data-repc="resiembras">Resiembras</button>
-            <button class="btn ghost" data-repc="ensayos">Ensayos</button>
-            <button class="btn gold" data-repc="completo">Informe completo</button>
+            <div class="rep-grupo"><h4>Cómo está el lote</h4>
+<button class="btn ghost" data-repc="general">Resumen general<small>Cifras principales de Investigación 6</small></button>
+<button class="btn ghost" data-repc="vivas">Plantas vivas por clon<small>Cuántas sigue vivas cada clon</small></button>
+<button class="btn ghost" data-repc="desarrollo">Plantas ya prendidas<small>Las confirmadas como establecidas</small></button>
+<button class="btn ghost" data-repc="clon">Estado por clon<small>Vivas, muertas y supervivencia de cada clon</small></button>
+<button class="btn ghost" data-repc="surco">Estado por surco<small>Lo mismo, pero surco por surco</small></button>
+            </div>
+            <div class="rep-grupo"><h4>Qué se cosechó</h4>
+<button class="btn ghost" data-repc="varetas">Cosecha de varetas<small>Varetas y estacas obtenidas, punto por punto</small></button>
+<button class="btn ghost" data-repc="madres">Plantas madre<small>Acumulado y días desde el último corte</small></button>
+            </div>
+            <div class="rep-grupo"><h4>Qué se perdió y se repuso</h4>
+<button class="btn ghost" data-repc="muertas">Plantas muertas<small>Dónde y cuándo se perdieron</small></button>
+<button class="btn ghost" data-repc="resiembras">Resiembras<small>Puntos que se volvieron a sembrar</small></button>
+<button class="btn ghost" data-repc="ensayos">Ensayos de campo<small>Resultados de los ensayos registrados</small></button>
+            </div>
+            <button class="btn gold" data-repc="completo">Informe completo del lote<small>Todo lo anterior en un solo documento</small></button>
           </div>
         </div>
         <div id="repc-output"></div>
@@ -1632,15 +1681,43 @@ function dispoLote(l){
   return o;
 }
 /* disponibilidad agrupada por clon */
+/* Etapa del lote traducida a la clave de conteo. Los lotes que ya salieron
+   a campo no tienen plantas en el vivero. */
+const ETAPA_CONTEO={tunel:'tunel', endure:'ce', polis:'polis'};
+const ETAPA_CONTEO_OK=['tunel','ce','polis'];
+/* Cuántas plantas tiene HOY un lote, y en qué etapa está.
+   Una planta está en UNA sola etapa: no se suman las tres. */
+function vivasHoy(l){
+  if(etapaDe(l)==='campo') return null;     // ya salió del vivero
+  /* El conteo MÁS RECIENTE manda, sin importar de qué etapa sea: quien
+     cuenta sabe dónde están las plantas hoy. Así el número se actualiza,
+     no se suma con los conteos anteriores. */
+  const cs=conteosDe(l).slice()
+    .sort((a,b)=>String(b.f||'').localeCompare(String(a.f||'')));
+  const c=cs[0];
+  if(c && ETAPA_CONTEO_OK.indexOf(c.etapa)>-1)
+    return {etapa:c.etapa, f:c.f, j7c:num(c.j7c), jc:num(c.jc),
+            bolsa:num(c.bolsa), total:totConteo(c), fuente:'conteo'};
+  /* Sin conteos: se usa lo que se registró al entrar a la etapa actual */
+  const e=etapaDe(l), k=ETAPA_CONTEO[e];
+  if(!k) return null;
+  const clave = e==='tunel'?'ini':(e==='endure'?'ce':'polis');
+  const r=recipEtapa(l,clave), t=totRecip(r);
+  if(t>0) return {etapa:k, f:fechaEtapa(l), j7c:r.j7c, jc:r.jc,
+                  bolsa:r.bolsa, total:t, fuente:'entrada'};
+  const suelto=totEtapa(l,clave);
+  return suelto>0 ? {etapa:k, f:fechaEtapa(l), j7c:0, jc:0, bolsa:0,
+                     total:suelto, fuente:'entrada'} : null;
+}
 function dispoPorClon(){
   const m={};
   data.lotes.forEach(l=>{
+    const v=vivasHoy(l); if(!v) return;      // en campo o sin datos: no cuenta
     const cl=normClon(l.clon); m[cl]=m[cl]||{clon:cl,lotes:0,tunel:0,ce:0,polis:0,j7c:0,jc:0,bolsa:0,ult:''};
-    const d=dispoLote(l); let tuvo=false;
-    ETAPAS.forEach(([k])=>{ m[cl][k]+=d[k].total; if(d[k].total>0)tuvo=true;
-      if(d[k].f>m[cl].ult) m[cl].ult=d[k].f;
-      m[cl].j7c+=d[k].j7c; m[cl].jc+=d[k].jc; m[cl].bolsa+=d[k].bolsa; });
-    if(tuvo) m[cl].lotes++;
+    m[cl][v.etapa]+=v.total;                 // SOLO su etapa actual
+    if(v.f>m[cl].ult) m[cl].ult=v.f;
+    m[cl].j7c+=v.j7c; m[cl].jc+=v.jc; m[cl].bolsa+=v.bolsa;
+    m[cl].lotes++;
   });
   return Object.values(m).filter(r=>r.tunel+r.ce+r.polis>0)
     .sort((a,b)=>{ if((a.clon==='Apodandra')!==(b.clon==='Apodandra')) return a.clon==='Apodandra'?1:-1;
@@ -1712,6 +1789,49 @@ function clonesVivosCampo(){
   return Object.keys(a).filter(c=>(a[c].viva+a[c].resem+a[c].desarrollo)>0).length;
 }
 /* ═══════════ INICIO ═══════════ */
+/* ── tarjetas plegables: se recuerda cuáles quedaron abiertas ── */
+let plegados={};
+function hacerPlegable(card, abiertaPorDefecto){
+  if(!card || card.classList.contains('fold')) return;
+  const h=card.querySelector('h2'); if(!h) return;
+  const id=(h.textContent||'').trim().slice(0,40);
+  const cuerpo=document.createElement('div'); cuerpo.className='fold-body';
+  const sum=document.createElement('div'); sum.className='fold-sum'; sum.textContent='';
+  const hijos=[]; let n=h.nextSibling;
+  while(n){ hijos.push(n); n=n.nextSibling; }
+  hijos.forEach(x=>cuerpo.appendChild(x));
+  card.appendChild(sum); card.appendChild(cuerpo);
+  card.classList.add('fold');
+  const abierta = plegados[id]!==undefined ? plegados[id] : !!abiertaPorDefecto;
+  card.classList.toggle('open', abierta);
+  h.addEventListener('click',()=>{
+    const ab=!card.classList.contains('open');
+    card.classList.toggle('open',ab); plegados[id]=ab;
+  });
+}
+/* la tarjeta que contiene un elemento, sin romper si no la hay */
+function cardDe(el){ return (el && typeof el.closest==='function') ? cardDe(el) : null; }
+function resumenPlegado(card, texto){
+  if(!card) return; const s=card.querySelector('.fold-sum'); if(s) s.textContent=texto||'';
+}
+/* qué tarjeta queda abierta por defecto en cada panel */
+const ABIERTA_POR_DEFECTO=['Plántulas disponibles hoy','Lotes registrados',
+  'Cosecha de varetas por clon','Ensayos de'];
+const CARDS_ESCRIBIR=['Nuevo lote en túnel','Nuevo ensayo de vivero','Registrar ensayo de campo',
+  'Registrar estacas por corte','Registrar producción'];
+let plegadoListo=false;
+function prepararTarjetas(){
+  if(plegadoListo) return; plegadoListo=true;
+  document.querySelectorAll('.card').forEach(c=>{
+    const h=c.querySelector('h2'); if(!h) return;
+    const t=(h.textContent||'').trim();
+    if(t.indexOf('Qué hay que hacer')===0) return;        // las tareas nunca se pliegan
+    const escribe=CARDS_ESCRIBIR.some(x=>t.indexOf(x)===0);
+    c.classList.add(escribe?'escribir':'leer');
+    const abre=escribe || ABIERTA_POR_DEFECTO.some(x=>t.indexOf(x)===0);
+    hacerPlegable(c, abre);
+  });
+}
 function renderInicio(){
   const tv=totalesViv(), cc=countsCampo();
   document.getElementById('inicio-kpis').innerHTML=`
@@ -1732,14 +1852,38 @@ function renderInicio(){
     ['Sembradas en campo','var(--campo)',tv.pCampo,pct(tv.pCampo,tv.pPolis)],
     ['Vivas en Inv. 6','var(--viva)',cc.vivas,null]];
   /* el embudo se movió al reporte "Del vivero al campo" (Vivero → Reportes) */
-  const late=data.lotes.filter(atrasado);
-  const sinSemb=cc.sinSembrar;
-  let h='';
-  if(late.length) h+=`<div class="hist-item">⚠ <b>${late.length} lote(s)</b> del vivero llevan más días de lo esperado en su etapa.</div>`;
-  if(sinSemb) h+=`<div class="hist-item">🌱 <b>${sinSemb} punto(s)</b> del mapa todavía no tienen siembra registrada.</div>`;
+  /* ── Qué hay que hacer hoy ── */
+  const pasan=(typeof lotesListosEtapa==='function'?lotesListosEtapa():[]).filter(x=>x.listo);
+  const sinConteo=data.lotes.filter(l=>{
+    if(etapaDe(l)==='campo') return false;
+    const cs=conteosDe(l); if(!cs.length) return true;
+    const u=cs.slice().sort((a,b)=>String(b.f||'').localeCompare(String(a.f||'')))[0];
+    const d=diasDesde(u.f); return d!==null && d>7;          // más de una semana
+  });
   const listos=puntosListosCorte().length;
-  if(listos) h+=`<div class="hist-item">✂ <b>${listos} planta(s) madre</b> llevan ${dCorte()} días o más sin cosechar varetas.</div>`;
-  document.getElementById('inicio-alertas').innerHTML=h||'<div class="empty"><b>Todo al día</b>No hay pendientes que requieran atención.</div>';
+  const sinSemb=cc.sinSembrar;
+  const sinConfirmar=Object.values(data.puntos).filter(p=>p.estado==='viva').length;
+
+  const T=[
+    {n:pasan.length, ic:'📦', tx:`<b>${pasan.length} lote(s)</b> ya cumplieron su etapa y deben pasar a la siguiente`,
+     ir:()=>{ irAModulo('vivero'); irATab('vivero','v-panel'); }},
+    {n:sinConteo.length, ic:'🔢', tx:`<b>${sinConteo.length} lote(s)</b> llevan más de una semana sin conteo`,
+     ir:()=>{ irAModulo('vivero'); irATab('vivero','v-registro'); }},
+    {n:listos, ic:'✂', tx:`<b>${listos} planta(s) madre</b> llevan ${dCorte()} días o más sin cosechar varetas`,
+     ir:()=>{ irAModulo('campo'); irATab('campo','c-jardin'); }},
+    {n:sinSemb, ic:'🌱', tx:`<b>${sinSemb} punto(s)</b> del mapa todavía no tienen siembra registrada`,
+     ir:()=>{ irAModulo('campo'); irATab('campo','c-mapa'); }},
+    {n:sinConfirmar, ic:'🟩', tx:`<b>${sinConfirmar} planta(s)</b> vivas sin confirmar si ya prendieron`,
+     ir:()=>{ irAModulo('campo'); irATab('campo','c-mapa'); }}
+  ].filter(x=>x.n>0);
+
+  const cont=document.getElementById('inicio-alertas');
+  cont.innerHTML = T.length
+    ? T.map((x,i)=>`<div class="tarea" data-tarea="${i}">
+        <span class="ic">${x.ic}</span><span class="tx">${x.tx}</span><span class="go">›</span></div>`).join('')
+    : '<div class="tarea ok"><span class="ic">✓</span><span class="tx">Todo al día. No hay pendientes.</span></div>';
+  cont.querySelectorAll('[data-tarea]').forEach(d=>
+    d.addEventListener('click',()=>T[+d.dataset.tarea].ir()));
 }
 
 /* ═══════════ VIVERO ═══════════ */
@@ -1795,7 +1939,7 @@ function renderViv(){
       tr.map(r=>`<tr><td><b>${esc(r.tipo)}</b></td><td>${r.lotes}</td><td>${r.proc}</td><td>${r.cont.toLocaleString('es-CO')}</td>
         <td>${pctTxt(r.jCE,r.cont)}</td><td>${r.pCampo.toLocaleString('es-CO')}</td><td>${pctTxt(r.pCampo,r.cont)}</td></tr>`).join('')+'</tbody>'
     : '<tbody><tr><td><div class="empty"><b>Sin datos</b>Registra lotes para ver el desglose.</div></td></tr></tbody>';
-  renderRecipClon(); renderDispo(); renderPaseEtapa(); renderPrendRecip();
+  renderRecipClon(); renderDispo(); renderPaseEtapa(); renderPrendRecip(); prepararTarjetas();
 }
 /* ¿qué recipiente le fue mejor a cada clon? */
 function renderRecipClon(){
@@ -1851,10 +1995,35 @@ function renderPaseEtapa(){
           <td><b>${x.dias}</b></td><td>${x.req} d</td><td>${est}</td>
           <td>${x.listo?NOM_ETAPA[SIG_ETAPA[x.etapa]]:'<span class="sm">—</span>'}</td></tr>`; }).join('')+'</tbody>'
     : '<tbody><tr><td><div class="empty"><b>Sin lotes en vivero</b>Registra un lote en el túnel para ver aquí cuándo debe pasar de etapa.</div></td></tr></tbody>';
+  resumenPlegado(cardDe(el), listos.length
+    ? `${listos.length} lote(s) listos para pasar de etapa`
+    : `Ninguno listo · ${todos.length} lote(s) en vivero`);
+}
+/* clones elegidos en el filtro; vacío = todos */
+let clonesVer=[];
+function renderFiltroClon(){
+  const el=document.getElementById('disp-filtro'); if(!el) return;
+  const todos=dispoPorClon().map(r=>r.clon);
+  if(todos.length<2){ el.innerHTML=''; return; }   // con un solo clon no hace falta
+  clonesVer=clonesVer.filter(c=>todos.indexOf(c)>-1);
+  el.innerHTML=`<button data-cl="" class="${clonesVer.length?'':'on'}">Todos</button>`+
+    todos.map(c=>`<button data-cl="${esc(c)}" class="${clonesVer.indexOf(c)>-1?'on':''}">${esc(etiqClon(c))}</button>`).join('');
+  el.querySelectorAll('[data-cl]').forEach(b=>b.addEventListener('click',()=>{
+    const c=b.dataset.cl;
+    if(!c) clonesVer=[];                                  // "Todos"
+    else { const i=clonesVer.indexOf(c);
+      if(i>-1) clonesVer.splice(i,1); else clonesVer.push(c); }
+    renderDispo();
+  }));
 }
 function renderDispo(){
   const el=document.getElementById('disp-table'), k=document.getElementById('disp-kpis'); if(!el) return;
-  const rs=dispoPorClon(), t=dispoTotal();
+  const todas=dispoPorClon();
+  const rs = clonesVer.length ? todas.filter(r=>clonesVer.indexOf(r.clon)>-1) : todas;
+  const t = rs.reduce((a,r)=>({tunel:a.tunel+r.tunel, ce:a.ce+r.ce, polis:a.polis+r.polis,
+    j7c:a.j7c+r.j7c, jc:a.jc+r.jc, bolsa:a.bolsa+r.bolsa}),
+    {tunel:0,ce:0,polis:0,j7c:0,jc:0,bolsa:0});
+  renderFiltroClon();
   if(k) k.innerHTML=`
     <div class="kpi"><div class="n" style="color:var(--tunel)">${t.tunel.toLocaleString('es-CO')}</div>
       <div class="l">En túnel</div><div class="d">vivas hoy</div></div>
@@ -1863,14 +2032,18 @@ function renderDispo(){
     <div class="kpi"><div class="n" style="color:var(--polis)">${t.polis.toLocaleString('es-CO')}</div>
       <div class="l">En polisombra</div><div class="d">vivas hoy</div></div>
     <div class="kpi"><div class="n" style="color:var(--accent)">${(t.tunel+t.ce+t.polis).toLocaleString('es-CO')}</div>
-      <div class="l">Total disponible</div><div class="d">${t.j7c} J7c · ${t.jc} Jc · ${t.bolsa} bolsas</div></div>`;
+      <div class="l">Total disponible</div><div class="d">${t.bolsa} bolsas · ${t.j7c} J7c · ${t.jc} Jc</div></div>`+
+    (clonesVer.length?`<div class="sinfo" style="grid-column:1/-1">Mostrando solo ${clonesVer.length} clon(es) de ${todas.length}. Toca "Todos" para ver el resto.</div>`:'');
   el.innerHTML= rs.length
     ? '<thead><tr><th>Clon</th><th>Lotes</th><th>Túnel</th><th>C. endurec.</th><th>Polisombra</th><th>Total</th><th>Bolsas</th><th>J7c</th><th>Jc</th><th>Último conteo</th></tr></thead><tbody>'+
       rs.map(r=>`<tr><td><b>${esc(etiqClon(r.clon))}</b></td><td>${r.lotes}</td>
         <td style="color:var(--tunel)">${r.tunel}</td><td style="color:var(--endure)">${r.ce}</td>
         <td style="color:var(--polis)">${r.polis}</td><td><b>${r.tunel+r.ce+r.polis}</b></td>
         <td>${r.bolsa}</td><td>${r.j7c}</td><td>${r.jc}</td><td>${fmtF(r.ult)}</td></tr>`).join('')+'</tbody>'
-    : '<tbody><tr><td><div class="empty"><b>Sin conteos registrados</b>Abre un lote y registra el conteo semanal de plántulas vivas.</div></td></tr></tbody>';
+    : `<tbody><tr><td><div class="empty"><b>${todas.length?'Ningún clon seleccionado':'Sin conteos registrados'}</b>${
+        todas.length?'Toca "Todos" o elige un clon arriba.':'Abre un lote y registra el conteo semanal de plántulas vivas.'}</div></td></tr></tbody>`;
+  resumenPlegado(cardDe(el),
+    `${(t.tunel+t.ce+t.polis).toLocaleString('es-CO')} plántulas · ${t.tunel} túnel · ${t.ce} endurec. · ${t.polis} polisombra`);
 }
 function lotesFiltrados(){
   const q=(document.getElementById('f-clon').value||'').toLowerCase().trim();
