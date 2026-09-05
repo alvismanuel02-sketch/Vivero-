@@ -1601,6 +1601,7 @@ function aplicarApariencia(){
 
 /* ═══════════ RENDER GENERAL ═══════════ */
 function renderAll(){
+  prepararTarjetas();          // reordena el DOM una sola vez, antes de pintar
   renderInicio(); renderViv(); renderLotes(); renderEnsVivero();
   renderStatsCampo(); renderMapa(); renderClonTable(); renderJardin();
   renderEnsCampo(); renderLog(); llenarSelects();
@@ -1810,7 +1811,7 @@ function hacerPlegable(card, abiertaPorDefecto){
   });
 }
 /* la tarjeta que contiene un elemento, sin romper si no la hay */
-function cardDe(el){ return (el && typeof el.closest==='function') ? cardDe(el) : null; }
+function cardDe(el){ return (el && typeof el.closest==='function') ? el.closest('.card') : null; }
 function resumenPlegado(card, texto){
   if(!card) return; const s=card.querySelector('.fold-sum'); if(s) s.textContent=texto||'';
 }
@@ -1939,7 +1940,7 @@ function renderViv(){
       tr.map(r=>`<tr><td><b>${esc(r.tipo)}</b></td><td>${r.lotes}</td><td>${r.proc}</td><td>${r.cont.toLocaleString('es-CO')}</td>
         <td>${pctTxt(r.jCE,r.cont)}</td><td>${r.pCampo.toLocaleString('es-CO')}</td><td>${pctTxt(r.pCampo,r.cont)}</td></tr>`).join('')+'</tbody>'
     : '<tbody><tr><td><div class="empty"><b>Sin datos</b>Registra lotes para ver el desglose.</div></td></tr></tbody>';
-  renderRecipClon(); renderDispo(); renderPaseEtapa(); renderPrendRecip(); prepararTarjetas();
+  renderRecipClon(); renderDispo(); renderPaseEtapa(); renderPrendRecip();
 }
 /* ¿qué recipiente le fue mejor a cada clon? */
 function renderRecipClon(){
