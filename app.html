@@ -1688,8 +1688,23 @@ const ETAPA_CONTEO={tunel:'tunel', endure:'ce', polis:'polis'};
 const ETAPA_CONTEO_OK=['tunel','ce','polis'];
 /* Cuántas plantas tiene HOY un lote, y en qué etapa está.
    Una planta está en UNA sola etapa: no se suman las tres. */
+/* ¿Se sembró TODO lo que había, o quedaron plantas en el vivero?
+   Al sembrar parte de un lote, el resto sigue en polisombra y debe contar. */
+function quedaEnVivero(l){
+  if(!l.f_campo) return true;                       // todavía no se ha sembrado nada
+  const cs=conteosDe(l).slice()
+    .sort((a,b)=>String(b.f||'').localeCompare(String(a.f||'')));
+  /* si hay un conteo POSTERIOR a la siembra, ese manda */
+  const post=cs.find(c=>String(c.f||'')>=String(l.f_campo) && c.etapa!=='campo');
+  if(post) return totConteo(post)>0;
+  /* si no, se compara lo que había en polisombra contra lo que se sembró */
+  const enPolis=totEtapa(l,'polis') || (cs[0]?totConteo(cs[0]):0);
+  const sembrado=totEtapa(l,'campo');
+  if(enPolis>0 && sembrado>0 && sembrado<enPolis) return true;   // quedó un remanente
+  return false;
+}
 function vivasHoy(l){
-  if(etapaDe(l)==='campo') return null;     // ya salió del vivero
+  if(!quedaEnVivero(l)) return null;         // ya salió todo al campo
   /* El conteo MÁS RECIENTE manda, sin importar de qué etapa sea: quien
      cuenta sabe dónde están las plantas hoy. Así el número se actualiza,
      no se suma con los conteos anteriores. */
@@ -1699,7 +1714,18 @@ function vivasHoy(l){
   if(c && ETAPA_CONTEO_OK.indexOf(c.etapa)>-1)
     return {etapa:c.etapa, f:c.f, j7c:num(c.j7c), jc:num(c.jc),
             bolsa:num(c.bolsa), total:totConteo(c), fuente:'conteo'};
-  /* Sin conteos: se usa lo que se registró al entrar a la etapa actual */
+  /* Sembrado parcial: el remanente se queda en polisombra */
+  if(l.f_campo){
+    const enPolis=totEtapa(l,'polis'), sembrado=totEtapa(l,'campo');
+    const resto=enPolis-sembrado;
+    if(resto>0){
+      const r=recipEtapa(l,'polis'), rc=recipEtapa(l,'campo');
+      return {etapa:'polis', f:l.f_campo, total:resto, fuente:'remanente',
+              bolsa:Math.max(0,r.bolsa-rc.bolsa), j7c:Math.max(0,r.j7c-rc.j7c),
+              jc:Math.max(0,r.jc-rc.jc)};
+    }
+    return null;
+  }
   const e=etapaDe(l), k=ETAPA_CONTEO[e];
   if(!k) return null;
   const clave = e==='tunel'?'ini':(e==='endure'?'ce':'polis');
@@ -2673,13 +2699,20 @@ document.getElementById('lc-add').addEventListener('click',()=>{
   const l=data.lotes.find(x=>x.id===loteId); if(!l){ toast('Abre un lote primero',true); return; }
   const g=k=>document.getElementById(k).value;
   const j7c=num(g('lc-j7c')), jc=num(g('lc-jc')), bolsa=num(g('lc-bolsa'));
-  if(j7c<=0&&jc<=0&&bolsa<=0){ toast('Escribe cuántas plántulas vivas hay',true); return; }
+  const vacios=['lc-j7c','lc-jc','lc-bolsa'].every(k=>String(g(k)).trim()==='');
+  if(vacios){ toast('Escribe las cantidades. Si todo murió, escribe 0 en cada uno.',true); return; }
+  if(j7c<=0&&jc<=0&&bolsa<=0){
+    if(!confirm('¿Registrar que NO quedan plántulas vivas?\n\n'+
+       'Se guardará 0 en bolsas, J7c y Jc. El lote quedará en cero en la disponibilidad.')) return;
+  }
   const etapa=g('lc-etapa'), f=g('lc-f')||today();
   l.conteos=conteosDe(l); l.conteos.push({f,etapa,j7c,jc,bolsa,nota:g('lc-nota').trim()});
   sucioLote(l.id);
   ['lc-j7c','lc-jc','lc-bolsa','lc-nota','lc-f'].forEach(k=>document.getElementById(k).value='');
   const et=(ETAPAS.find(e=>e[0]===etapa)||[,etapa])[1];
-  logEvent('conteo',null,`Clon ${l.clon} · ${et}: ${j7c+jc+bolsa} vivas (${fmtF(f)})`,'vivero');
+  logEvent('conteo',null,(j7c+jc+bolsa)===0
+    ? `Clon ${l.clon} · ${et}: lote perdido, 0 vivas (${fmtF(f)})`
+    : `Clon ${l.clon} · ${et}: ${j7c+jc+bolsa} vivas (${fmtF(f)})`,'vivero');
   ['lc-j7c','lc-jc','lc-bolsa','lc-nota','lc-f'].forEach(k=>{const e=document.getElementById(k); if(e)e.value='';});
   listaConteos(l); renderViv(); renderLog(); toast('Conteo registrado');
 });
@@ -2699,11 +2732,12 @@ document.getElementById('l-save').addEventListener('click',async()=>{
   ['ce','polis','campo'].forEach(e=>{
     const k=ETAPA_KEYS[e];
     const b=num(g('l-'+e+'-bolsa')), s7=num(g('l-'+e+'-j7c')), sc=num(g('l-'+e+'-jc'));
+    /* ¿escribió algo, aunque sea 0? Un 0 escrito es un dato, no un campo vacío */
+    const escribio=['bolsa','j7c','jc'].some(x=>String(g('l-'+e+'-'+x)).trim()!=='');
     const suelto=g(totCampoDe[e]);
-    if(b+s7+sc>0){ l[k[0]]=b; l[k[1]]=s7; l[k[2]]=sc;
-      l[{ce:'j_ce',polis:'p_polis',campo:'p_campo'}[e]] = b+s7+sc; }
-    else { l[k[0]]=0; l[k[1]]=0; l[k[2]]=0;
-      l[{ce:'j_ce',polis:'p_polis',campo:'p_campo'}[e]] = suelto===''?'':num(suelto); }
+    const tot={ce:'j_ce',polis:'p_polis',campo:'p_campo'}[e];
+    if(escribio){ l[k[0]]=b; l[k[1]]=s7; l[k[2]]=sc; l[tot]=b+s7+sc; }
+    else { l[k[0]]=0; l[k[1]]=0; l[k[2]]=0; l[tot]= suelto===''?'':num(suelto); }
   });
   l.lote_destino=g('l-lote').trim(); l.resp=g('l-resp').trim();
   l.ensayo=g('l-ensayo'); l.nota=g('l-nota').trim();
