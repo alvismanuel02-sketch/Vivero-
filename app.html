@@ -168,6 +168,8 @@
   .chip.polis{background:rgba(91,191,98,.16);color:var(--polis)}
   .chip.campo{background:rgba(217,180,74,.16);color:var(--campo)}
   .chip.late{background:rgba(205,90,58,.18);color:var(--alerta)}
+  .chip.perdido{background:rgba(205,90,58,.14);color:var(--muerta)}
+  .chip.parcial{background:rgba(217,180,74,.14);color:var(--campo)}
   .tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;background:var(--accent-dim);color:var(--accent);
     padding:2px 7px;border-radius:5px;margin-right:5px;display:inline-block;margin-top:5px}
   .bar{height:7px;border-radius:4px;background:var(--viva);display:inline-block;vertical-align:middle;margin-left:6px}
@@ -471,21 +473,21 @@
                 </optgroup>
                 <option value="__otro">Otro (escribir cuál)</option>
               </select>
-              <input type="text" id="n-clon" placeholder="Escribe el clon" style="display:none;margin-top:6px"></div>
+              <input autocomplete="off" type="text" id="n-clon" placeholder="Escribe el clon" style="display:none;margin-top:6px"></div>
             <div><label>Tipo de material</label><select id="n-tipo">
               <option>Clon élite</option><option>Apodandra (patrón)</option>
               <option>Tolerante</option><option>Injerto</option><option>Otro</option></select></div>
             <div><label>Fecha en túnel *</label>
-              <div class="date-row"><input type="date" id="n-ftunel"><button class="btn ghost btn-hoy" id="n-ftunel-hoy">Hoy</button></div></div>
-            <div><label>Responsable</label><input type="text" id="n-resp" placeholder="Quién sembró"></div>
-            <div><label>Jiffis J7c (grandes)</label><input type="number" id="n-j7c" min="0" placeholder="0"></div>
-            <div><label>Jiffis Jc (medianos)</label><input type="number" id="n-jc" min="0" placeholder="0"></div>
-            <div><label>Bolsas</label><input type="number" id="n-btunel" min="0" placeholder="0"></div>
-            <div><label>Estacas por jiffi</label><input type="number" id="n-epj" min="1" value="2"></div>
-            <div><label>Estacas por bolsa</label><input type="number" id="n-epb" min="1" value="1"></div>
-            <input type="hidden" id="n-jtunel">
+              <div class="date-row"><input autocomplete="off" type="date" id="n-ftunel"><button class="btn ghost btn-hoy" id="n-ftunel-hoy">Hoy</button></div></div>
+            <div><label>Responsable</label><input autocomplete="off" type="text" id="n-resp" placeholder="Quién sembró"></div>
+            <div><label>Jiffis J7c (grandes)</label><input autocomplete="off" type="number" id="n-j7c" min="0" placeholder="0"></div>
+            <div><label>Jiffis Jc (medianos)</label><input autocomplete="off" type="number" id="n-jc" min="0" placeholder="0"></div>
+            <div><label>Bolsas</label><input autocomplete="off" type="number" id="n-btunel" min="0" placeholder="0"></div>
+            <div><label>Estacas por jiffi</label><input autocomplete="off" type="number" id="n-epj" min="1" value="2"></div>
+            <div><label>Estacas por bolsa</label><input autocomplete="off" type="number" id="n-epb" min="1" value="1"></div>
+            <input autocomplete="off" type="hidden" id="n-jtunel">
             <div><label>Ensayo</label><select id="n-ensayo"></select></div>
-            <div style="grid-column:span 3"><label>Nota</label><input type="text" id="n-nota" placeholder="Observaciones"></div>
+            <div style="grid-column:span 3"><label>Nota</label><input autocomplete="off" type="text" id="n-nota" placeholder="Observaciones"></div>
             <div class="wide"><button class="btn primary" id="n-add">Registrar lote en túnel</button></div>
           </div>
         </div>
@@ -493,7 +495,7 @@
           <h2>Lotes registrados</h2>
           <p class="hint">Toca ✎ o cualquier fila para corregir el clon, los jiffis o las bolsas. Toca ✕ para borrar el lote.</p>
           <div class="filters">
-            <div style="flex:1;min-width:160px"><label>Buscar clon</label><input type="text" id="f-clon" placeholder="Escribe un clon…"></div>
+            <div style="flex:1;min-width:160px"><label>Buscar clon</label><input autocomplete="off" type="text" id="f-clon" placeholder="Escribe un clon…"></div>
             <div><label>Etapa</label><select id="f-etapa">
               <option value="">Todas</option><option value="tunel">En túnel</option>
               <option value="endure">Endurecimiento</option><option value="polis">Polisombra</option>
@@ -505,28 +507,33 @@
           </div>
           <div class="scroll"><table id="lotes-table"></table></div>
         </div>
+        <div class="card">
+          <h2>Lotes perdidos · historial</h2>
+          <p class="hint">Lotes en los que murieron todas las plántulas. Salen del vivero y de la disponibilidad, pero su historia se conserva aquí. Si uno llegó aquí por error, ábrelo y borra el conteo en cero.</p>
+          <div class="scroll"><table id="perdidos-table"></table></div>
+        </div>
       </section>
 
       <section class="view" id="v-ens">
         <div class="card no-print" id="ens-vivero-card">
           <h2>Nuevo ensayo de vivero</h2>
           <div class="grid g2">
-            <div><label>Nombre *</label><input type="text" id="ev-nombre" placeholder="Contenedores en túnel"></div>
+            <div><label>Nombre *</label><input autocomplete="off" type="text" id="ev-nombre" placeholder="Contenedores en túnel"></div>
             <div><label>Tipo</label><select id="ev-tipo">
               <option>Contenedores / enraizamiento</option><option>Nutricional</option>
               <option>Hormonas / enraizante</option><option>Sustrato</option><option>Sanidad / hongos</option>
               <option>Densidad / distancias</option><option>Riego</option><option>Injertos</option><option>Otro</option></select></div>
             <div class="wide"><label>Pregunta que busca responder *</label>
-              <input type="text" id="ev-pregunta" placeholder="¿En qué contenedor prenden mejor las estacas?"></div>
-            <div><label>Clones</label><input type="text" id="ev-clones" placeholder="21, 22, Apodandra"></div>
-            <div><label>Tratamientos que se comparan</label><input type="text" id="ev-trat" placeholder="Canasta, Bolsa, Jiffy"></div>
+              <input autocomplete="off" type="text" id="ev-pregunta" placeholder="¿En qué contenedor prenden mejor las estacas?"></div>
+            <div><label>Clones</label><input autocomplete="off" type="text" id="ev-clones" placeholder="21, 22, Apodandra"></div>
+            <div><label>Tratamientos que se comparan</label><input autocomplete="off" type="text" id="ev-trat" placeholder="Canasta, Bolsa, Jiffy"></div>
             <div><label>Fecha de inicio</label>
-              <div class="date-row"><input type="date" id="ev-fecha"><button class="btn ghost btn-hoy" id="ev-fecha-hoy">Hoy</button></div></div>
+              <div class="date-row"><input autocomplete="off" type="date" id="ev-fecha"><button class="btn ghost btn-hoy" id="ev-fecha-hoy">Hoy</button></div></div>
             <div><label>¿Hasta qué etapa se observa?</label><select id="ev-etapafin">
               <option value="tunel">Solo túnel</option><option value="endure">Hasta endurecimiento</option>
               <option value="polis" selected>Hasta polisombra</option><option value="campo">También en campo</option></select></div>
-            <div id="wrap-semcampo" style="display:none"><label>Semanas en campo</label><input type="number" id="ev-semcampo" min="1" value="4"></div>
-            <div><label>Duración total (semanas)</label><input type="number" id="ev-semanas" min="1" value="5"></div>
+            <div id="wrap-semcampo" style="display:none"><label>Semanas en campo</label><input autocomplete="off" type="number" id="ev-semcampo" min="1" value="4"></div>
+            <div><label>Duración total (semanas)</label><input autocomplete="off" type="number" id="ev-semanas" min="1" value="5"></div>
             <div class="wide"><label>Criterios de evaluación</label>
               <div id="crit-list"></div>
               <button class="btn ghost" id="crit-add" style="margin-top:8px">+ Agregar criterio</button></div>
@@ -619,8 +626,8 @@
           <h2>Plantas madre <span class="sm">(jardín de origen · otros lotes)</span></h2>
           <div class="scroll"><table id="jc-madres"></table></div>
           <div class="grid g2" style="margin-top:10px">
-            <div><label>Código de la madre *</label><input type="text" id="cm-codigo" placeholder="4A"></div>
-            <div><label>Lote / ubicación de origen</label><input type="text" id="cm-ubic" placeholder="Lote 3"></div>
+            <div><label>Código de la madre *</label><input autocomplete="off" type="text" id="cm-codigo" placeholder="4A"></div>
+            <div><label>Lote / ubicación de origen</label><input autocomplete="off" type="text" id="cm-ubic" placeholder="Lote 3"></div>
           </div>
           <button class="btn ghost full" id="cm-add" style="margin-top:8px">+ Agregar planta madre</button>
         </div>
@@ -630,11 +637,11 @@
           <p class="hint">Cada entrada queda con su fecha y se va sumando al acumulado.</p>
           <div class="grid g2">
             <div><label>Fecha</label>
-              <div class="date-row"><input type="date" id="cm-f"><button class="btn ghost btn-hoy" id="cm-f-hoy">Hoy</button></div></div>
-            <div><label>Frutos</label><input type="number" id="cm-frutos" min="0" placeholder="0"></div>
-            <div><label>Varetas cosechadas</label><input type="number" id="cm-varetas" min="0" placeholder="0"></div>
-            <div><label>Estacas que salieron</label><input type="number" id="cm-estacas" min="0" placeholder="0"></div>
-            <div class="wide"><label>Nota</label><input type="text" id="cm-nota" placeholder="Observación…"></div>
+              <div class="date-row"><input autocomplete="off" type="date" id="cm-f"><button class="btn ghost btn-hoy" id="cm-f-hoy">Hoy</button></div></div>
+            <div><label>Frutos</label><input autocomplete="off" type="number" id="cm-frutos" min="0" placeholder="0"></div>
+            <div><label>Varetas cosechadas</label><input autocomplete="off" type="number" id="cm-varetas" min="0" placeholder="0"></div>
+            <div><label>Estacas que salieron</label><input autocomplete="off" type="number" id="cm-estacas" min="0" placeholder="0"></div>
+            <div class="wide"><label>Nota</label><input autocomplete="off" type="text" id="cm-nota" placeholder="Observación…"></div>
           </div>
           <button class="btn primary full" id="cm-save" style="margin-top:8px">+ Registrar</button>
           <div id="cm-hist" style="margin-top:10px"></div>
@@ -652,8 +659,8 @@
           <p class="hint">Escribe cuántas estacas salieron de cada corte ya registrado. Filtra por fecha, por clon, o por ambos.</p>
           <div class="grid g2">
             <div><label>Fecha del corte</label>
-              <div class="date-row"><input type="date" id="es-f"><button class="btn ghost btn-hoy" id="es-f-hoy">Hoy</button></div></div>
-            <div><label>Clon (opcional)</label><input type="text" id="es-clon" placeholder="Ej: 21 · vacío = todos"></div>
+              <div class="date-row"><input autocomplete="off" type="date" id="es-f"><button class="btn ghost btn-hoy" id="es-f-hoy">Hoy</button></div></div>
+            <div><label>Clon (opcional)</label><input autocomplete="off" type="text" id="es-clon" placeholder="Ej: 21 · vacío = todos"></div>
           </div>
           <button class="btn ghost full" id="es-buscar" style="margin-top:8px">Buscar cortes</button>
           <div id="es-lista" style="margin-top:10px"></div>
@@ -680,19 +687,19 @@
           <h2>Registrar ensayo de campo</h2>
           <p class="hint">Marca los clones y luego toca los puntos que participan. No hay que escribir códigos.</p>
           <div class="grid g2">
-            <div><label>Nombre del ensayo *</label><input type="text" id="ec-nombre" placeholder="Ensayo nutricional"></div>
-            <div><label>Tipo</label><input type="text" id="ec-tipo" placeholder="Nutricional / Mulch / Dobles"></div>
+            <div><label>Nombre del ensayo *</label><input autocomplete="off" type="text" id="ec-nombre" placeholder="Ensayo nutricional"></div>
+            <div><label>Tipo</label><input autocomplete="off" type="text" id="ec-tipo" placeholder="Nutricional / Mulch / Dobles"></div>
             <div class="wide"><label>Pregunta que busca responder *</label>
-              <input type="text" id="ec-pregunta" placeholder="¿Mejora la supervivencia aplicar el fertilizante X?"></div>
+              <input autocomplete="off" type="text" id="ec-pregunta" placeholder="¿Mejora la supervivencia aplicar el fertilizante X?"></div>
             <div class="wide"><label>Clones que participan</label>
               <div id="ec-clones-box" class="chips-box"></div>
-              <input type="hidden" id="ec-clones"></div>
+              <input autocomplete="off" type="hidden" id="ec-clones"></div>
             <div><label>Fecha de inicio</label>
-              <div class="date-row"><input type="date" id="ec-fecha"><button class="btn ghost btn-hoy" id="ec-fecha-hoy">Hoy</button></div></div>
+              <div class="date-row"><input autocomplete="off" type="date" id="ec-fecha"><button class="btn ghost btn-hoy" id="ec-fecha-hoy">Hoy</button></div></div>
             <div><label>Fecha de fin prevista</label>
-              <div class="date-row"><input type="date" id="ec-fecha-fin"><button class="btn ghost btn-hoy" id="ec-ffin-hoy">Hoy</button></div></div>
+              <div class="date-row"><input autocomplete="off" type="date" id="ec-fecha-fin"><button class="btn ghost btn-hoy" id="ec-ffin-hoy">Hoy</button></div></div>
             <div><label>Grupo que estoy marcando</label><select id="ec-grupo-sel"></select></div>
-            <div><label>Evaluador</label><input type="text" id="ec-evaluador" placeholder="Quién hace el seguimiento"></div>
+            <div><label>Evaluador</label><input autocomplete="off" type="text" id="ec-evaluador" placeholder="Quién hace el seguimiento"></div>
             <div class="wide">
               <label>Puntos que participan <span id="ec-cuenta" class="sinfo"></span></label>
               <p class="hint" style="margin:0 0 8px">Toca los puntos en el mapa de abajo. Se marcan con el grupo elegido arriba. Toca de nuevo para quitar.</p>
@@ -767,22 +774,22 @@
       <button data-e="viva">Sembrada</button><button data-e="resem">Resembrada</button>
       <button data-e="muerta">Muerta</button><button data-e="vacia">Sin sembrar</button></div></div>
   <div class="field"><label>Registrar siembra</label>
-    <div class="date-row" style="margin-bottom:8px"><input type="date" id="d-fecha">
+    <div class="date-row" style="margin-bottom:8px"><input autocomplete="off" type="date" id="d-fecha">
       <button class="btn ghost btn-hoy" id="d-fecha-hoy">Hoy</button></div>
     <button class="btn primary full" id="d-siembra">+ Registrar siembra</button>
     <div id="d-siembra-estado" style="margin-top:8px"></div></div>
   <div class="field"><label>Registrar resiembra</label>
-    <div class="date-row" style="margin-bottom:8px"><input type="date" id="d-fecha-resiembra">
+    <div class="date-row" style="margin-bottom:8px"><input autocomplete="off" type="date" id="d-fecha-resiembra">
       <button class="btn ghost btn-hoy" id="d-fres-hoy">Hoy</button></div>
     <button class="btn gold full" id="d-resiembra">+ Registrar resiembra</button>
     <div id="d-resiembra-lista" style="margin-top:8px"></div></div>
   <div class="stage-block">
     <h4><span class="fdot" style="background:var(--viva)"></span>Frutos (verificación)</h4>
     <div class="field"><label>Fecha de la verificación</label>
-      <div class="date-row"><input type="date" id="d-ffruto"><button class="btn ghost btn-hoy" id="d-ffruto-hoy">Hoy</button></div></div>
+      <div class="date-row"><input autocomplete="off" type="date" id="d-ffruto"><button class="btn ghost btn-hoy" id="d-ffruto-hoy">Hoy</button></div></div>
     <div class="grid g2">
-      <div><label>Frutos verdes</label><input type="number" id="d-verdes" min="0" placeholder="0"></div>
-      <div><label>Frutos secos</label><input type="number" id="d-secos" min="0" placeholder="0"></div>
+      <div><label>Frutos verdes</label><input autocomplete="off" type="number" id="d-verdes" min="0" placeholder="0"></div>
+      <div><label>Frutos secos</label><input autocomplete="off" type="number" id="d-secos" min="0" placeholder="0"></div>
     </div>
     <button class="btn full" id="d-fruto" style="background:var(--viva);color:#0d1a0d;margin-top:8px">+ Registrar verificación</button>
     <div id="d-fruto-lista" style="margin-top:9px"></div>
@@ -790,16 +797,16 @@
   <div class="stage-block">
     <h4><span class="fdot" style="background:var(--vareta)"></span>Cosecha de varetas</h4>
     <div class="field"><label>Fecha del corte</label>
-      <div class="date-row"><input type="date" id="d-fvareta"><button class="btn ghost btn-hoy" id="d-fvareta-hoy">Hoy</button></div></div>
+      <div class="date-row"><input autocomplete="off" type="date" id="d-fvareta"><button class="btn ghost btn-hoy" id="d-fvareta-hoy">Hoy</button></div></div>
     <div class="grid g2">
-      <div><label>Varetas cosechadas</label><input type="number" id="d-nvareta" min="0" placeholder="16"></div>
-      <div><label>Estacas que salieron</label><input type="number" id="d-nestacas" min="0" placeholder="opcional"></div>
+      <div><label>Varetas cosechadas</label><input autocomplete="off" type="number" id="d-nvareta" min="0" placeholder="16"></div>
+      <div><label>Estacas que salieron</label><input autocomplete="off" type="number" id="d-nestacas" min="0" placeholder="opcional"></div>
     </div>
     <button class="btn violet full" id="d-vareta" style="margin-top:8px">+ Registrar cosecha</button>
     <div id="d-vareta-lista" style="margin-top:9px"></div>
   </div>
   <div class="field"><label>Ensayo</label><select id="d-ensayo"></select></div>
-  <div class="field"><label>Grupo dentro del ensayo</label><input type="text" id="d-grupo" placeholder="Tratamiento / Testigo"></div>
+  <div class="field"><label>Grupo dentro del ensayo</label><input autocomplete="off" type="text" id="d-grupo" placeholder="Tratamiento / Testigo"></div>
   <div class="field"><label>Nota</label><textarea id="d-nota" placeholder="Observaciones del punto…"></textarea></div>
   <div class="dactions">
     <button class="btn primary full" id="d-save">Guardar</button>
@@ -816,18 +823,18 @@
     <h4><span class="fdot" style="background:var(--tunel)"></span>Túnel</h4>
     <div class="field"><label>Clon</label>
       <select id="l-clon-sel"></select>
-      <input type="text" id="l-clon" placeholder="Escribe el clon" style="display:none;margin-top:6px"></div>
+      <input autocomplete="off" type="text" id="l-clon" placeholder="Escribe el clon" style="display:none;margin-top:6px"></div>
     <div class="field"><label>Tipo de material</label><select id="l-tipo">
       <option>Clon élite</option><option>Apodandra (patrón)</option><option>Tolerante</option>
       <option>Injerto</option><option>Otro</option></select></div>
     <div class="field"><label>Fecha en túnel</label>
-      <div class="date-row"><input type="date" id="l-ftunel"><button class="btn ghost btn-hoy" data-hoy="l-ftunel">Hoy</button></div></div>
+      <div class="date-row"><input autocomplete="off" type="date" id="l-ftunel"><button class="btn ghost btn-hoy" data-hoy="l-ftunel">Hoy</button></div></div>
     <div class="grid g2">
-      <div><label>Bolsas iniciales</label><input type="number" id="l-btunel" min="0"></div>
-      <div><label>Jiffis J7c (grandes)</label><input type="number" id="l-j7c" min="0"></div>
-      <div><label>Jiffis Jc (medianos)</label><input type="number" id="l-jc" min="0"></div>
-      <div><label>Estacas por jiffi</label><input type="number" id="l-epj" min="1"></div>
-      <div><label>Estacas por bolsa</label><input type="number" id="l-epb" min="1"></div>
+      <div><label>Bolsas iniciales</label><input autocomplete="off" type="number" id="l-btunel" min="0"></div>
+      <div><label>Jiffis J7c (grandes)</label><input autocomplete="off" type="number" id="l-j7c" min="0"></div>
+      <div><label>Jiffis Jc (medianos)</label><input autocomplete="off" type="number" id="l-jc" min="0"></div>
+      <div><label>Estacas por jiffi</label><input autocomplete="off" type="number" id="l-epj" min="1"></div>
+      <div><label>Estacas por bolsa</label><input autocomplete="off" type="number" id="l-epb" min="1"></div>
     </div>
     <div class="sinfo" id="l-jinfo" style="margin:6px 0 2px"></div>
     <div class="stage-block">
@@ -836,12 +843,12 @@
         <option value="tunel">Túnel</option><option value="ce">Casa de endurecimiento</option>
         <option value="polis">Polisombra</option></select></div>
       <div class="field"><label>Fecha del conteo</label>
-        <div class="date-row"><input type="date" id="lc-f"><button class="btn ghost btn-hoy" id="lc-f-hoy">Hoy</button></div></div>
+        <div class="date-row"><input autocomplete="off" type="date" id="lc-f"><button class="btn ghost btn-hoy" id="lc-f-hoy">Hoy</button></div></div>
       <div class="grid g2">
-        <div><label>Bolsas</label><input type="number" id="lc-bolsa" min="0" placeholder="0"></div>
-        <div><label>Jiffis J7c</label><input type="number" id="lc-j7c" min="0" placeholder="0"></div>
-        <div><label>Jiffis Jc</label><input type="number" id="lc-jc" min="0" placeholder="0"></div>
-        <div><label>Nota</label><input type="text" id="lc-nota" placeholder="Opcional"></div>
+        <div><label>Bolsas</label><input autocomplete="off" type="number" id="lc-bolsa" min="0" placeholder="0"></div>
+        <div><label>Jiffis J7c</label><input autocomplete="off" type="number" id="lc-j7c" min="0" placeholder="0"></div>
+        <div><label>Jiffis Jc</label><input autocomplete="off" type="number" id="lc-jc" min="0" placeholder="0"></div>
+        <div><label>Nota</label><input autocomplete="off" type="text" id="lc-nota" placeholder="Opcional"></div>
       </div>
       <button class="btn primary full" id="lc-add" style="margin-top:8px">+ Registrar conteo</button>
       <div id="lc-lista" style="margin-top:9px"></div>
@@ -850,44 +857,46 @@
   <div class="stage-block">
     <h4><span class="fdot" style="background:var(--endure)"></span>Casa de endurecimiento</h4>
     <div class="field"><label>Fecha de entrada</label>
-      <div class="date-row"><input type="date" id="l-fce"><button class="btn ghost btn-hoy" data-hoy="l-fce">Hoy</button></div></div>
+      <div class="date-row"><input autocomplete="off" type="date" id="l-fce"><button class="btn ghost btn-hoy" data-hoy="l-fce">Hoy</button></div></div>
     <div class="grid g2">
-      <div><label>Bolsas</label><input type="number" id="l-ce-bolsa" min="0" placeholder="0"></div>
-      <div><label>Jiffis J7c</label><input type="number" id="l-ce-j7c" min="0" placeholder="0"></div>
-      <div><label>Jiffis Jc</label><input type="number" id="l-ce-jc" min="0" placeholder="0"></div>
+      <div><label>Bolsas</label><input autocomplete="off" type="number" id="l-ce-bolsa" min="0" placeholder="0"></div>
+      <div><label>Jiffis J7c</label><input autocomplete="off" type="number" id="l-ce-j7c" min="0" placeholder="0"></div>
+      <div><label>Jiffis Jc</label><input autocomplete="off" type="number" id="l-ce-jc" min="0" placeholder="0"></div>
     </div>
     <div class="field"><label>Cuántos pasaron <span class="sm">(total)</span></label>
-      <input type="number" id="l-jce" min="0"></div>
+      <input autocomplete="off" type="number" id="l-jce" min="0"></div>
     <div class="sinfo" id="l-ce-info" style="margin:-4px 0 2px"></div>
   </div>
   <div class="stage-block">
     <h4><span class="fdot" style="background:var(--polis)"></span>Polisombra</h4>
     <div class="field"><label>Fecha de entrada</label>
-      <div class="date-row"><input type="date" id="l-fpolis"><button class="btn ghost btn-hoy" data-hoy="l-fpolis">Hoy</button></div></div>
+      <div class="date-row"><input autocomplete="off" type="date" id="l-fpolis"><button class="btn ghost btn-hoy" data-hoy="l-fpolis">Hoy</button></div></div>
     <div class="grid g2">
-      <div><label>Bolsas</label><input type="number" id="l-polis-bolsa" min="0" placeholder="0"></div>
-      <div><label>Jiffis J7c</label><input type="number" id="l-polis-j7c" min="0" placeholder="0"></div>
-      <div><label>Jiffis Jc</label><input type="number" id="l-polis-jc" min="0" placeholder="0"></div>
+      <div><label>Bolsas</label><input autocomplete="off" type="number" id="l-polis-bolsa" min="0" placeholder="0"></div>
+      <div><label>Jiffis J7c</label><input autocomplete="off" type="number" id="l-polis-j7c" min="0" placeholder="0"></div>
+      <div><label>Jiffis Jc</label><input autocomplete="off" type="number" id="l-polis-jc" min="0" placeholder="0"></div>
     </div>
     <div class="field"><label>Plantas que pasaron <span class="sm">(total)</span></label>
-      <input type="number" id="l-ppolis" min="0"></div>
+      <input autocomplete="off" type="number" id="l-ppolis" min="0"></div>
     <div class="sinfo" id="l-polis-info" style="margin:-4px 0 2px"></div>
   </div>
   <div class="stage-block">
-    <h4><span class="fdot" style="background:var(--campo)"></span>Campo</h4>
+    <h4><span class="fdot" style="background:var(--campo)"></span>Siembra en campo</h4>
+    <div class="sinfo" id="ls-info" style="margin-bottom:8px"></div>
+    <p class="hint" style="margin-top:0">Registra solo lo que se sembró. Lo que queda sigue en el vivero y cuenta en la disponibilidad. Si siembras el resto otro día, registra otra siembra.</p>
     <div class="field"><label>Fecha de siembra</label>
-      <div class="date-row"><input type="date" id="l-fcampo"><button class="btn ghost btn-hoy" data-hoy="l-fcampo">Hoy</button></div></div>
+      <div class="date-row"><input autocomplete="off" type="date" id="ls-f"><button class="btn ghost btn-hoy" id="ls-f-hoy">Hoy</button></div></div>
     <div class="grid g2">
-      <div><label>Bolsas</label><input type="number" id="l-campo-bolsa" min="0" placeholder="0"></div>
-      <div><label>Jiffis J7c</label><input type="number" id="l-campo-j7c" min="0" placeholder="0"></div>
-      <div><label>Jiffis Jc</label><input type="number" id="l-campo-jc" min="0" placeholder="0"></div>
+      <div><label>Bolsas sembradas</label><input autocomplete="off" type="number" id="ls-bolsa" min="0" placeholder="0"></div>
+      <div><label>Jiffis J7c sembrados</label><input autocomplete="off" type="number" id="ls-j7c" min="0" placeholder="0"></div>
+      <div><label>Jiffis Jc sembrados</label><input autocomplete="off" type="number" id="ls-jc" min="0" placeholder="0"></div>
+      <div><label>Lote de destino</label><select id="ls-destino">
+        <option>Investigación 6A</option><option>Investigación 6B</option><option>Otro</option></select></div>
     </div>
-    <div class="field"><label>Plantas sembradas <span class="sm">(total)</span></label>
-      <input type="number" id="l-pcampo" min="0"></div>
-    <div class="sinfo" id="l-campo-info" style="margin:-4px 0 2px"></div>
-    <div class="field"><label>Lote de destino</label><input type="text" id="l-lote" placeholder="Investigación 6"></div>
+    <button class="btn primary full" id="ls-add" style="margin-top:8px">+ Registrar siembra</button>
+    <div id="ls-lista" style="margin-top:9px"></div>
   </div>
-  <div class="field"><label>Responsable</label><input type="text" id="l-resp"></div>
+  <div class="field"><label>Responsable</label><input autocomplete="off" type="text" id="l-resp"></div>
   <div class="field"><label>Ensayo</label><select id="l-ensayo"></select></div>
   <div class="field"><label>Nota</label><textarea id="l-nota"></textarea></div>
   <div class="dactions"><button class="btn primary full" id="l-save">Guardar cambios</button>
@@ -905,7 +914,7 @@
     <div class="field"><label>Semana</label><select id="ens-semana"></select></div>
     <div class="field"><label>Tratamiento</label><select id="ens-trat"></select></div>
     <div class="field"><label>Fecha</label>
-      <div class="date-row"><input type="date" id="ens-fecha"><button class="btn ghost btn-hoy" data-hoy="ens-fecha">Hoy</button></div></div>
+      <div class="date-row"><input autocomplete="off" type="date" id="ens-fecha"><button class="btn ghost btn-hoy" data-hoy="ens-fecha">Hoy</button></div></div>
     <div id="ens-valores"></div>
     <div class="field"><label>Observación</label><textarea id="ens-obs"></textarea></div>
     <button class="btn primary full" id="ens-addrev">Guardar revisión</button>
@@ -931,9 +940,9 @@
     <div class="sview active" id="s-general">
       <p class="hint">Valores que usa todo el sistema.</p>
       <div class="grid g2">
-        <div class="wide"><label>Nombre del lote de campo</label><input type="text" id="cfg-nombre" placeholder="Investigación 6"></div>
-        <div><label>Días entre cortes de varetas</label><input type="number" id="cfg-dcorte" min="1"></div>
-        <div><label>Estacas por vareta</label><input type="number" id="cfg-estvar" min="1"></div>
+        <div class="wide"><label>Nombre del lote de campo</label><input autocomplete="off" type="text" id="cfg-nombre" placeholder="Investigación 6"></div>
+        <div><label>Días entre cortes de varetas</label><input autocomplete="off" type="number" id="cfg-dcorte" min="1"></div>
+        <div><label>Estacas por vareta</label><input autocomplete="off" type="number" id="cfg-estvar" min="1"></div>
       </div>
       <div class="sinfo" style="margin-top:12px">Con estos dos valores el sistema calcula cuándo una planta madre está lista para cosechar y cuántas estacas rinden las varetas.</div>
     </div>
@@ -941,14 +950,14 @@
     <div class="sview" id="s-vivero">
       <p class="hint">Cuánto dura cada etapa. Se usa para avisar qué lotes van atrasados.</p>
       <div class="grid g3">
-        <div><label>Días en túnel</label><input type="number" id="cfg-dtunel" min="1"></div>
-        <div><label>Días en endurecimiento</label><input type="number" id="cfg-dce" min="1"></div>
-        <div><label>Días en polisombra</label><input type="number" id="cfg-dpolis" min="1"></div>
+        <div><label>Días en túnel</label><input autocomplete="off" type="number" id="cfg-dtunel" min="1"></div>
+        <div><label>Días en endurecimiento</label><input autocomplete="off" type="number" id="cfg-dce" min="1"></div>
+        <div><label>Días en polisombra</label><input autocomplete="off" type="number" id="cfg-dpolis" min="1"></div>
       </div>
       <p class="hint" style="margin-top:18px">Valores que aparecen ya escritos al registrar un lote nuevo.</p>
       <div class="grid g2">
-        <div><label>Estacas por jiffi</label><input type="number" id="cfg-epj" min="1"></div>
-        <div><label>Estacas por bolsa</label><input type="number" id="cfg-epb" min="1"></div>
+        <div><label>Estacas por jiffi</label><input autocomplete="off" type="number" id="cfg-epj" min="1"></div>
+        <div><label>Estacas por bolsa</label><input autocomplete="off" type="number" id="cfg-epb" min="1"></div>
       </div>
       <div class="sinfo" style="margin-top:12px" id="cfg-ciclo"></div>
     </div>
@@ -961,11 +970,11 @@
     <div class="sview" id="s-apar">
       <div class="cgrid" id="color-grid"></div>
       <div style="margin-top:18px"><label>Tamaño de los puntos</label>
-        <div class="rangerow"><input type="range" id="cfg-pt" min="16" max="48" step="2">
+        <div class="rangerow"><input autocomplete="off" type="range" id="cfg-pt" min="16" max="48" step="2">
           <span id="cfg-pt-val" class="sinfo" style="width:46px"></span></div></div>
       <div style="margin-top:16px">
-        <div class="swline"><input type="checkbox" id="cfg-num"><label>Mostrar el número dentro de cada punto</label></div>
-        <div class="swline"><input type="checkbox" id="cfg-guia"><label>Cruz de guía activada</label></div>
+        <div class="swline"><input autocomplete="off" type="checkbox" id="cfg-num"><label>Mostrar el número dentro de cada punto</label></div>
+        <div class="swline"><input autocomplete="off" type="checkbox" id="cfg-guia"><label>Cruz de guía activada</label></div>
       </div>
       <button class="btn ghost" id="cfg-reset-color" style="margin-top:16px">Volver a los colores originales</button>
     </div>
@@ -978,7 +987,7 @@
         <button class="btn ghost" id="btn-export-campo" style="flex:1">⬇ Solo Investigación 6</button>
       </div>
       <button class="btn ghost full" id="btn-import">⬆ Restaurar o importar una copia</button>
-      <input type="file" id="file-import" accept="application/json" style="display:none">
+      <input autocomplete="off" type="file" id="file-import" accept="application/json" style="display:none">
       <div id="datos-info" class="sinfo" style="margin-top:16px"></div>
     </div>
     <div class="dactions" style="margin-top:20px">
@@ -999,8 +1008,8 @@
   <div class="stage-block">
     <h4><span class="fdot" style="background:var(--accent)"></span>Observación del evaluador</h4>
     <div class="field"><label>Fecha</label>
-      <div class="date-row"><input type="date" id="ecd-fobs"><button class="btn ghost btn-hoy" data-hoy="ecd-fobs">Hoy</button></div></div>
-    <div class="field"><label>Evaluador</label><input type="text" id="ecd-quien" placeholder="Quién observa"></div>
+      <div class="date-row"><input autocomplete="off" type="date" id="ecd-fobs"><button class="btn ghost btn-hoy" data-hoy="ecd-fobs">Hoy</button></div></div>
+    <div class="field"><label>Evaluador</label><input autocomplete="off" type="text" id="ecd-quien" placeholder="Quién observa"></div>
     <div class="field"><label>Qué se observó</label><textarea id="ecd-texto" placeholder="Cómo van los tratamientos, qué diferencias se notan…"></textarea></div>
     <button class="btn primary full" id="ecd-addobs">+ Guardar observación</button>
     <div id="ecd-obs-lista" style="margin-top:9px"></div>
@@ -1009,7 +1018,7 @@
   <div class="stage-block">
     <h4><span class="fdot" style="background:var(--campo)"></span>Cierre del ensayo</h4>
     <div class="field"><label>Fecha de fin</label>
-      <div class="date-row"><input type="date" id="ecd-ffin"><button class="btn ghost btn-hoy" data-hoy="ecd-ffin">Hoy</button></div></div>
+      <div class="date-row"><input autocomplete="off" type="date" id="ecd-ffin"><button class="btn ghost btn-hoy" data-hoy="ecd-ffin">Hoy</button></div></div>
     <div class="field"><label>Conclusión final</label><textarea id="ecd-conclusion" placeholder="Qué respondió el ensayo"></textarea></div>
     <button class="btn gold full" id="ecd-cerrar">Cerrar ensayo y guardar resultado</button>
     <div id="ecd-cierre-estado" style="margin-top:8px"></div>
@@ -1038,11 +1047,13 @@ const SB_BASE = SUPABASE_URL.trim().replace(/\/+$/,'').replace(/\/rest\/v1$/,'')
 /* Versión de la app. La base solo acepta cambios de esta versión.
    Para dejar fuera las versiones viejas: sube el número aquí y
    corre el SQL de bloqueo con el mismo número. */
-const APP_VER = 'v3';
+const APP_VER = 'v4';   // v4: 28/09/2026, protección contra mapa en blanco
 const sb = (SB_BASE.indexOf('http')===0 && window.supabase)
   ? window.supabase.createClient(SB_BASE, SUPABASE_ANON.trim(),
       {global:{headers:{'x-app-ver':APP_VER}}}) : null;
-if(SB_BASE.indexOf('http')===0 && !window.supabase) console.error('No cargó la librería de Supabase');
+/* la base está configurada pero la librería no cargó (internet caído al abrir) */
+const SIN_LIBRERIA = SB_BASE.indexOf('http')===0 && !window.supabase;
+if(SIN_LIBRERIA) console.error('No cargó la librería de Supabase');
 const REFRESH_SEG = 40;
 
 const USE_SHEET = !!sb;
@@ -1087,7 +1098,10 @@ function clonar6B(){
     const i=su.n-99;
     const tieneClon=(su.asign||[]).some(a=>String(a.clon||'').trim()!=='');
     if(tieneClon) return;
-    su.asign=asign6B(i,+su.total||0); n++;
+    const nueva=asign6B(i,+su.total||0);
+    const firma=a=>(a||[]).map(x=>String(x.clon||'').trim()+'|'+String(x.r||'')).join(';');
+    if(firma(nueva)===firma(su.asign)) return;   // ya estaba así: nada que cambiar
+    su.asign=nueva; n++;
   });
   if(n){ pend.cfg=true; buildIndex(); guardarLocal(); }
   return n;
@@ -1102,6 +1116,30 @@ function crear6B(){
   });
   pend.cfg=true; buildIndex(); guardarLocal();
   return PUNTOS_6B.reduce((a,b)=>a+b,0);
+}
+/* En 6B, los puntos sin clon quedaron como "sembrada" (naranja) y parte de los
+   sembrados el 15/09 quedaron sin fecha. Se corrige una sola vez, y solo si esta
+   sesión leyó bien la base (si no, se intenta en la próxima). Solo toca puntos
+   a los que nadie les ha registrado nada. */
+function corregir6B(){
+  if(!cfg || cfg.fix6B) return null;
+  if(USE_SHEET && !cargaServidorOK) return null;
+  const sur=(cfg.surcos||[]).filter(su=>loteDe(su)==='6B'); if(!sur.length) return null;
+  const pos=[]; sur.forEach(su=>{ for(let p=1;p<=(+su.total||0);p++) pos.push([su.n,p]); });
+  if(!pos.every(([a,b])=>data.puntos[pkey(a,b)])) return null;
+  let vac=0, sem=0;
+  pos.forEach(([a,b])=>{
+    const id=pkey(a,b), pt=data.puntos[id];
+    const virgen = pt.estado==='viva' && !pt.sembrada && !pt.fecha && !(pt.hist||[]).length
+                   && !(num(pt.resiembras)>0) && !(pt.cosechas||[]).length;
+    if(!virgen) return;
+    if(!clonForPoint(a,b)){ pt.estado='vacia'; vac++; }
+    else { pt.fecha='2026-09-15'; pt.sembrada=true;
+      pt.hist=[{ts:nowStamp(),txt:'Siembra registrada (fecha: 15/09/2026)'}]; sem++; }
+    pend.pts[id]=true;
+  });
+  cfg.fix6B=true; pend.cfg=true; guardarLocal();
+  return (vac||sem)?{vac,sem}:null;
 }
 function migrarDuraciones(){
   if(!cfg) return;
@@ -1135,9 +1173,9 @@ function fmtF(f){ if(!f)return '—'; const p=String(f).slice(0,10).split('-'); 
 function pct(a,b){ return b>0?Math.round(a/b*100):null; }
 function pctTxt(a,b){ const v=pct(a,b); return v===null?'—':v+'%'; }
 function diasDesde(f){ if(!f)return null; const d=Math.floor((Date.now()-new Date(String(f).slice(0,10)+'T00:00:00').getTime())/86400000); return d<0?0:d; }
-const ESTADO_LABEL={viva:'Viva',resem:'Resembrada',muerta:'Muerta',vacia:'Vacía'};
-const ET_LABEL={tunel:'En túnel',endure:'Endurecimiento',polis:'Polisombra',campo:'En campo'};
-const ET_FIN={tunel:'Túnel',endure:'Casa de endurecimiento',polis:'Polisombra',campo:'Campo'};
+const ESTADO_LABEL={viva:'Viva',resem:'Resembrada',muerta:'Muerta',vacia:'Vacía',desarrollo:'En desarrollo'};
+const ET_LABEL={tunel:'En túnel',endure:'Endurecimiento',polis:'Polisombra',campo:'En campo',perdido:'Perdido'};
+const ET_FIN={tunel:'Túnel',endure:'Casa de endurecimiento',polis:'Polisombra',campo:'Campo',perdido:'Perdido'};
 function toast(msg,err,accion){
   const t=document.getElementById('toast');
   t.innerHTML=esc(msg)+(accion?' <button id="toast-act">'+esc(accion.txt)+'</button>':'');
@@ -1227,9 +1265,17 @@ function detalleSurco(s){
 function eachPunto(fn){ surcoNums().forEach(s=>{ for(let p=1;p<=ptsDe(s);p++){ const pt=data.puntos[pkey(s,p)]; if(pt) fn(pt,s,p); } }); }
 
 /* ---------- vivero: cálculos ---------- */
-function etapaDe(l){ if(l.f_campo)return 'campo'; if(l.f_polis)return 'polis'; if(l.f_ce)return 'endure'; return 'tunel'; }
-function fechaEtapa(l){ const e=etapaDe(l); return e==='campo'?l.f_campo:e==='polis'?l.f_polis:e==='endure'?l.f_ce:l.f_tunel; }
-function atrasado(l){ const e=etapaDe(l); if(e==='campo')return false;
+function etapaDe(l){
+  const s=estadoLote(l);
+  if(s.cerrado) return s.perdido?'perdido':'campo';        // ya no queda nada en el vivero
+  if(l.f_polis)return 'polis'; if(l.f_ce)return 'endure'; return 'tunel';
+}
+function fechaEtapa(l){ const e=etapaDe(l);
+  if(e==='perdido') return estadoLote(l).fPerdido||'';
+  if(e==='campo') return estadoLote(l).ultSiembra||l.f_campo;
+  return e==='polis'?l.f_polis:e==='endure'?l.f_ce:l.f_tunel; }
+function atrasado(l){ const e=etapaDe(l); if(e==='campo'||e==='perdido')return false;
+  if(estadoLote(l).parcial) return false;      // lo que quedó espera a estar en condiciones
   const d=diasDesde(fechaEtapa(l)); return d!==null && d>DUR[e]; }
 /* la misma lista del registro, para poder corregir el clon de un lote */
 const CLONES_M=['4A - M','11M','20M','21M','22M','26M'];
@@ -1288,6 +1334,8 @@ function tipoDe(l){
   return 'Clon élite';
 }
 const esApo=l=>tipoDe(l).indexOf('Apodandra')===0;
+/* un lote está en proceso mientras le quede algo en el vivero */
+const enVivero=l=>{ const e=etapaDe(l); return e!=='campo' && e!=='perdido'; };
 function totalesViv(ls){
   const arr=ls||data.lotes;
   let cont=0,jiffis=0,bolsas=0,jCE=0,pPolis=0,pCampo=0,estacas=0,enTunel=0,enCE=0,enPolis=0,enCampo=0;
@@ -1299,7 +1347,7 @@ function totalesViv(ls){
     else if(e==='polis')enPolis+=num(l.p_polis); else enCampo+=num(l.p_campo); });
   return {cont,jiffis,bolsas,jCE,pPolis,pCampo,estacas,enTunel,enCE,enPolis,enCampo,
     disponibles:enCE+enPolis,lotes:arr.length,
-    enProceso:arr.filter(l=>etapaDe(l)!=='campo').length,atrasados:arr.filter(atrasado).length};
+    enProceso:arr.filter(enVivero).length,atrasados:arr.filter(atrasado).length};
 }
 function porClonViv(){
   const m={};
@@ -1375,7 +1423,15 @@ const sheet={
         id:String(r.id).replace(/^P/,''),
         clon:String(r.clon||'').replace(/^'/,''),
         sembrada: r.sembrada?'true':'false' }));
-      res=await sb.from('puntos').upsert(rows,{onConflict:'id'});
+      /* Un punto "en blanco" (sin fecha, sin historial, sin cortes…) solo se CREA si
+         no existe; nunca reemplaza al que ya está en la base. Así un dispositivo que
+         abrió sin datos no puede borrar el mapa real (pasó el 28/09/2026). */
+      const blancos=rows.filter(puntoEnBlanco), conDatos=rows.filter(r=>!puntoEnBlanco(r));
+      if(blancos.length){
+        res=await sb.from('puntos').upsert(blancos,{onConflict:'id',ignoreDuplicates:true});
+        if(res && res.error) throw res.error;
+      }
+      if(conDatos.length) res=await sb.from('puntos').upsert(conDatos,{onConflict:'id'});
     }
     else if(action==='saveLotes'){
       const rows=(payload||[]).map(l=>Object.assign({},l,{
@@ -1484,6 +1540,14 @@ function frutosCampo(){
   Object.values(data.puntos).forEach(pt=>{ (pt.frutos||[]).forEach(r=>{ verdes+=num(r.verdes); secos+=num(r.secos); rev++; }); });
   return {verdes,secos,rev};
 }
+/* Punto sin ningún dato registrado (como los que crea el mapa por defecto).
+   Estos solo se crean en la base si no existen; nunca reemplazan un punto real. */
+function puntoEnBlanco(r){
+  const vacio=v=>v==null||v===''||v==='[]'||(Array.isArray(v)&&!v.length);
+  return vacio(r.fecha) && (!r.sembrada||r.sembrada==='false') && !(+r.resiembras)
+    && vacio(r.hist) && vacio(r.cosechas) && vacio(r.frutos) && vacio(r.resiembras_fechas)
+    && vacio(r.nota) && vacio(r.ensayo) && vacio(r.grupo);
+}
 function serPunto(id,pt){
   const [s,p]=id.split('-').map(Number);
   return {id:'P'+id,surco:s,punto:p,clon:"'"+clonForPoint(s,p),num:puntoNum(s,p),estado:pt.estado,
@@ -1529,7 +1593,14 @@ function logEvent(tipo,punto,detalle,modulo){
   data.log.unshift(l); if(data.log.length>900) data.log.length=900;
   pend.log.push(l); guardarLocal(); flush();
 }
-const sucioPunto=id=>{ pend.pts[id]=true; ultimoPend=Date.now(); guardarLocal(); setConn(); flush(); };
+/* Un cambio hecho por la persona siempre deja rastro: si el punto quedara "en blanco",
+   se anota en su historial; si no, la base no aceptaría el cambio (protección contra borrados). */
+function marcarPend(id,txt){
+  const pt=data.puntos[id];
+  if(pt && puntoEnBlanco(serPunto(id,pt))) pt.hist=[{ts:nowStamp(),txt:txt||'Punto editado (quedó sin datos)'}];
+  pend.pts[id]=true;
+}
+const sucioPunto=id=>{ marcarPend(id); ultimoPend=Date.now(); guardarLocal(); setConn(); flush(); };
 const sucioLote=id=>{ pend.lotes[id]=true; ultimoPend=Date.now(); guardarLocal(); setConn(); flush(); };
 
 function parseEnsVivero(arr){
@@ -1580,30 +1651,59 @@ function sembrarFaltantesVacios(){
       resiembrasFechas:[],cosechas:[],ensayo:'',grupo:'',nota:'',hist:[]}; nuevos.push(id); } }});
   return nuevos;
 }
+let cargaServidorOK=false;     // solo con datos confirmados se corrigen datos viejos
+/* Pantalla de error cuando no hay datos ni en este dispositivo ni en la nube.
+   Antes la app abría con un mapa "en blanco" y lo subía encima del real (28/09/2026). */
+function errorDeCarga(){
+  const el=document.getElementById('loading'); if(!el) return;
+  el.style.display='block';
+  const ct=document.getElementById('conn-txt'), cc=document.getElementById('conn');
+  if(ct) ct.textContent='Sin conexión con la nube'; if(cc) cc.className='pill off';
+  el.innerHTML='<div style="max-width:430px;margin:0 auto;line-height:1.55">'+
+    '<div style="font-size:34px;margin-bottom:6px">⚠️</div>'+
+    '<b>No se pudieron cargar los datos desde la nube.</b><br>'+
+    'Revisa la conexión a internet. Para proteger tus registros, la app no se abre con un mapa vacío.'+
+    '<br><br><button id="btn-reintentar" class="btn primary">Reintentar ahora</button>'+
+    '<div id="reint-txt" style="margin-top:10px;font-size:13px"></div></div>';
+  let seg=20; const t=document.getElementById('reint-txt');
+  const iv=setInterval(()=>{ seg--; if(t) t.textContent='Reintento automático en '+seg+' s';
+    if(seg<=0){ clearInterval(iv); location.reload(); } },1000);
+  document.getElementById('btn-reintentar').onclick=()=>{ clearInterval(iv); location.reload(); };
+}
+let teniaLocal=false;   // este dispositivo ya tenía puntos guardados
 async function load(){
   await leerLocal(); buildIndex();
+  teniaLocal = Object.keys((data&&data.puntos)||{}).length>0;
   if(USE_SHEET && navigator.onLine){
     try{
       const srv=await sheet.load();
       if(srv.cfg && !pend.cfg){ let c=srv.cfg; if(typeof c==='string'){ try{c=JSON.parse(c);}catch(x){c=null;} }
         if(c){ cfg=migrarCfg(Object.assign(configDefecto(),c)); buildIndex(); } }
-      const mios={}; Object.keys(pend.pts).forEach(id=>{ if(data.puntos[id]) mios[id]=data.puntos[id]; });
+      /* cambios propios aún sin subir: se conservan, salvo los puntos "en blanco",
+         que nunca deben tapar lo que ya hay en la nube */
+      const mios={}; Object.keys(pend.pts).forEach(id=>{ const pt=data.puntos[id];
+        if(pt && !puntoEnBlanco(serPunto(id,pt))) mios[id]=pt; });
       const srvPts=parsePuntos(srv.puntos), nSrv=Object.keys(srvPts).length, nLoc=Object.keys(data.puntos).length;
-      /* si la lectura llegó vacía o a medias, se conserva lo que hay guardado aquí */
-      const dudosa = nLoc>0 && (nSrv===0 || (nLoc>=20 && nSrv < nLoc*0.5));
+      /* si la lectura llegó vacía o a medias, se conserva lo que hay guardado aquí.
+         0 puntos con un mapa ya configurado en la nube = lectura fallida (no una base vacía) */
+      const baseNueva = nSrv===0 && !srv.cfg;
+      const dudosa = (nSrv===0 && !baseNueva) || (nLoc>=20 && nSrv < nLoc*0.5);
       if(dudosa){
         console.warn('lectura incompleta al abrir: '+nSrv+' de '+nLoc+' puntos. Se conserva lo local.');
-        setTimeout(()=>toast('Conexión inestable al abrir. Se conservaron tus datos guardados.',true),1200);
+        if(nLoc>0) setTimeout(()=>toast('Conexión inestable al abrir. Se conservaron tus datos guardados.',true),1200);
       } else {
         if(!Object.keys(pend.lotes).length) data.lotes=srv.lotes||[];
         if(!Object.keys(pend.ensV).length) data.ensVivero=parseEnsVivero(srv.ensVivero);
         if(!Object.keys(pend.ensC).length) data.ensCampo=parseEnsCampo(srv.ensCampo);
         data.puntos=srvPts; Object.assign(data.puntos,mios);
+        cargaServidorOK=true;
         if((srv.log||[]).length) data.log=srv.log;
         if(!Object.keys(pend.madres||{}).length) data.madres=parseMadres(srv.madres);
       }
     }catch(e){ console.error(e); }
   }
+  /* sin datos aquí y sin poder leer la nube: NO se arma un mapa en blanco */
+  if(!teniaLocal && ((USE_SHEET && !cargaServidorOK) || SIN_LIBRERIA)){ errorDeCarga(); return; }
   migrarDuraciones();
   const n6b=crear6B();
   if(n6b) logEvent('mapa',null,`Investigación 6B creada: 18 surcos, ${n6b} puntos`);
@@ -1615,6 +1715,8 @@ async function load(){
   const nuevos=sembrarFaltantes();
   if(nuevos.length){ nuevos.forEach(id=>pend.pts[id]=true);
     if(nuevos.length===totalPuntos()) logEvent('siembra',null,'Mapa inicializado: '+totalPuntos()+' puntos'); }
+  const f6=corregir6B();
+  if(f6) logEvent('mapa',null,`Investigación 6B: ${f6.vac} punto(s) pasan a "sin sembrar" · ${f6.sem} siembra(s) del 15/09 completadas`);
   aplicarApariencia(); await guardarLocal();
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
@@ -1749,9 +1851,80 @@ function normClon(x){
   return m ? m[1] : t.toUpperCase();
 }
 const etiqClon=c=>c==='Apodandra'?'Apodandra (patrón)':('Clon '+c);
+/* El navegador sugería valores anteriores al escribir (escribes 2 y ofrece 22, 42...).
+   Se apaga en todos los campos, también en los que se crean después de cargar. */
+document.addEventListener('focusin',e=>{
+  const t=e.target;
+  if(t && (t.tagName==='INPUT'||t.tagName==='TEXTAREA') && t.getAttribute('autocomplete')!=='off')
+    t.setAttribute('autocomplete','off');
+},true);
 function conteosDe(l){ const v=l.conteos;
-  if(typeof v==='string'){ try{ return JSON.parse(v||'[]'); }catch(x){ return []; } }
-  return Array.isArray(v)?v:[]; }
+  if(typeof v==='string'){ let a=[]; try{ a=JSON.parse(v||'[]'); }catch(x){ a=[]; }
+    l.conteos=Array.isArray(a)?a:[]; return l.conteos; }      // se guarda ya leído
+  if(!Array.isArray(v)) l.conteos=[];
+  return l.conteos; }
+/* ── HISTORIA DEL LOTE ──
+   Los conteos y las siembras viven juntos en l.conteos, en el orden en que se
+   registraron. Una siembra es {tipo:'siembra', etapa:'campo', f, bolsa, j7c, jc, destino}. */
+const esSiembra=c=>!!c && c.tipo==='siembra';
+const conteosViv=l=>conteosDe(l).filter(c=>!esSiembra(c) && ETAPA_CONTEO_OK.indexOf(c.etapa)>-1);
+const totSiembra=c=>{ const r=ent(c.bolsa)+ent(c.j7c)+ent(c.jc); return r>0?r:ent(c.total); };
+/* siembras del lote; los lotes viejos tienen una sola, guardada en los campos del lote */
+function siembrasDe(l){
+  const ev=conteosDe(l).filter(esSiembra);
+  if(ev.length) return ev;
+  if(l.f_campo){
+    const r=recipEtapa(l,'campo'), t=totRecip(r)||num(l.p_campo);
+    if(t>0) return [{f:l.f_campo,tipo:'siembra',etapa:'campo',bolsa:r.bolsa,j7c:r.j7c,jc:r.jc,
+                     total:t,destino:l.lote_destino||'',legado:true}];
+  }
+  return [];
+}
+/* Recorre la historia del lote en orden y dice qué queda HOY en el vivero.
+   La entrada a una etapa o un conteo fijan lo que hay; una siembra le resta. */
+function estadoLote(l){
+  const ev=[];
+  const R=o=>({bolsa:ent(o.bolsa),j7c:ent(o.j7c),jc:ent(o.jc)});
+  const entrada=(clave,f,etapa)=>{
+    if(!f && clave!=='ini') return;
+    const r=recipEtapa(l,clave), tr=totRecip(r);
+    ev.push({f:String(f||''),rk:0,i:0,tipo:'entrada',etapa,r:tr?r:null,total:tr||totEtapa(l,clave)});
+  };
+  entrada('ini',l.f_tunel,'tunel'); entrada('ce',l.f_ce,'ce'); entrada('polis',l.f_polis,'polis');
+  const cs=conteosDe(l);
+  cs.forEach((c,i)=>{
+    if(esSiembra(c)) ev.push({f:String(c.f||''),rk:1,i,tipo:'siembra',r:R(c),total:totSiembra(c)});
+    else if(ETAPA_CONTEO_OK.indexOf(c.etapa)>-1)
+      ev.push({f:String(c.f||''),rk:1,i,tipo:'conteo',etapa:c.etapa,r:R(c),total:totConteo(c)});
+  });
+  if(!cs.some(esSiembra)) siembrasDe(l).forEach(x=>             // siembra de lotes viejos
+    ev.push({f:String(x.f||''),rk:2,i:0,tipo:'siembra',r:R(x),total:totSiembra(x)}));
+  ev.sort((a,b)=>a.f<b.f?-1:a.f>b.f?1:((a.rk-b.rk)||(a.i-b.i)));
+  let st={bolsa:0,j7c:0,jc:0,total:0,det:false}, etapa='tunel', f='', sembradas=0, nS=0,
+      ultS='', ultCero=null, dato=false;
+  ev.forEach(e=>{
+    const conDet=e.r && (e.r.bolsa+e.r.j7c+e.r.jc)>0;
+    if(e.tipo==='siembra'){
+      nS++; sembradas+=e.total; ultS=e.f; f=e.f;
+      if(st.det && conDet){
+        ['bolsa','j7c','jc'].forEach(k=>st[k]=Math.max(0,st[k]-e.r[k]));
+        st.total=st.bolsa+st.j7c+st.jc;
+      } else { st={bolsa:0,j7c:0,jc:0,total:Math.max(0,st.total-e.total),det:false}; }
+      return;
+    }
+    if(e.tipo==='entrada' && !(e.total>0)){ etapa=e.etapa; if(e.f) f=e.f; return; }  // fecha sin cantidades
+    dato=true;
+    st = conDet ? {bolsa:e.r.bolsa,j7c:e.r.j7c,jc:e.r.jc,total:e.r.bolsa+e.r.j7c+e.r.jc,det:true}
+                : {bolsa:0,j7c:0,jc:0,total:e.total,det:false};
+    etapa=e.etapa; f=e.f;
+    ultCero = (e.tipo==='conteo' && e.total===0) ? e.f : null;
+  });
+  const cerrado = st.total<=0 && (nS>0 || (dato && ultCero!==null));
+  return {bolsa:st.bolsa,j7c:st.j7c,jc:st.jc,total:st.total,det:st.det,etapa,f,
+          sembradas,nSiembras:nS,ultSiembra:ultS,cerrado,
+          perdido:cerrado && nS===0, fPerdido:(cerrado && nS===0)?ultCero:'',
+          parcial:nS>0 && st.total>0};
+}
 /* último conteo registrado de un lote en una etapa */
 function ultConteo(l,etapa){
   const cs=conteosDe(l).filter(c=>c.etapa===etapa)
@@ -1776,53 +1949,11 @@ const ETAPA_CONTEO={tunel:'tunel', endure:'ce', polis:'polis'};
 const ETAPA_CONTEO_OK=['tunel','ce','polis'];
 /* Cuántas plantas tiene HOY un lote, y en qué etapa está.
    Una planta está en UNA sola etapa: no se suman las tres. */
-/* ¿Se sembró TODO lo que había, o quedaron plantas en el vivero?
-   Al sembrar parte de un lote, el resto sigue en polisombra y debe contar. */
-function quedaEnVivero(l){
-  if(!l.f_campo) return true;                       // todavía no se ha sembrado nada
-  const cs=conteosDe(l).slice()
-    .sort((a,b)=>String(b.f||'').localeCompare(String(a.f||'')));
-  /* si hay un conteo POSTERIOR a la siembra, ese manda */
-  const post=cs.find(c=>String(c.f||'')>=String(l.f_campo) && c.etapa!=='campo');
-  if(post) return totConteo(post)>0;
-  /* si no, se compara lo que había en polisombra contra lo que se sembró */
-  const enPolis=totEtapa(l,'polis') || (cs[0]?totConteo(cs[0]):0);
-  const sembrado=totEtapa(l,'campo');
-  if(enPolis>0 && sembrado>0 && sembrado<enPolis) return true;   // quedó un remanente
-  return false;
-}
 function vivasHoy(l){
-  if(!quedaEnVivero(l)) return null;         // ya salió todo al campo
-  /* El conteo MÁS RECIENTE manda, sin importar de qué etapa sea: quien
-     cuenta sabe dónde están las plantas hoy. Así el número se actualiza,
-     no se suma con los conteos anteriores. */
-  const cs=conteosDe(l).slice()
-    .sort((a,b)=>String(b.f||'').localeCompare(String(a.f||'')));
-  const c=cs[0];
-  if(c && ETAPA_CONTEO_OK.indexOf(c.etapa)>-1)
-    return {etapa:c.etapa, f:c.f, j7c:ent(c.j7c), jc:ent(c.jc),
-            bolsa:ent(c.bolsa), total:totConteo(c), fuente:'conteo'};
-  /* Sembrado parcial: el remanente se queda en polisombra */
-  if(l.f_campo){
-    const enPolis=totEtapa(l,'polis'), sembrado=totEtapa(l,'campo');
-    const resto=enPolis-sembrado;
-    if(resto>0){
-      const r=recipEtapa(l,'polis'), rc=recipEtapa(l,'campo');
-      return {etapa:'polis', f:l.f_campo, total:resto, fuente:'remanente',
-              bolsa:Math.max(0,r.bolsa-rc.bolsa), j7c:Math.max(0,r.j7c-rc.j7c),
-              jc:Math.max(0,r.jc-rc.jc)};
-    }
-    return null;
-  }
-  const e=etapaDe(l), k=ETAPA_CONTEO[e];
-  if(!k) return null;
-  const clave = e==='tunel'?'ini':(e==='endure'?'ce':'polis');
-  const r=recipEtapa(l,clave), t=totRecip(r);
-  if(t>0) return {etapa:k, f:fechaEtapa(l), j7c:r.j7c, jc:r.jc,
-                  bolsa:r.bolsa, total:t, fuente:'entrada'};
-  const suelto=totEtapa(l,clave);
-  return suelto>0 ? {etapa:k, f:fechaEtapa(l), j7c:0, jc:0, bolsa:0,
-                     total:suelto, fuente:'entrada'} : null;
+  const s=estadoLote(l);
+  if(s.cerrado || !(s.total>0)) return null;     // todo sembrado, perdido o sin datos
+  return {etapa:s.etapa, f:s.f, bolsa:s.bolsa, j7c:s.j7c, jc:s.jc, total:s.total,
+          fuente:s.parcial?'remanente':'conteo'};
 }
 function dispoPorClon(){
   const m={};
@@ -1976,8 +2107,8 @@ function renderInicio(){
   /* ── Qué hay que hacer hoy ── */
   const pasan=(typeof lotesListosEtapa==='function'?lotesListosEtapa():[]).filter(x=>x.listo);
   const sinConteo=data.lotes.filter(l=>{
-    if(etapaDe(l)==='campo') return false;
-    const cs=conteosDe(l); if(!cs.length) return true;
+    if(!enVivero(l)) return false;
+    const cs=conteosViv(l); if(!cs.length) return true;
     const u=cs.slice().sort((a,b)=>String(b.f||'').localeCompare(String(a.f||'')))[0];
     const d=diasDesde(u.f); return d!==null && d>7;          // más de una semana
   });
@@ -2053,7 +2184,7 @@ function renderViv(){
   const m={};
   data.lotes.forEach(l=>{const tp=tipoDe(l); m[tp]=m[tp]||{tipo:tp,lotes:0,cont:0,jCE:0,pCampo:0,proc:0};
     m[tp].lotes++; m[tp].cont+=contDe(l); m[tp].jCE+=num(l.j_ce); m[tp].pCampo+=num(l.p_campo);
-    if(etapaDe(l)!=='campo') m[tp].proc++;});
+    if(enVivero(l)) m[tp].proc++;});
   const tr=Object.values(m).sort((x,y)=>y.cont-x.cont);
   document.getElementById('tipos-table').innerHTML= tr.length
     ? '<thead><tr><th>Tipo</th><th>Lotes</th><th>En proceso</th><th>Contenedores</th><th>% prend.</th><th>A campo</th><th>% total</th></tr></thead><tbody>'+
@@ -2084,10 +2215,12 @@ function renderRecipClon(){
 function lotesListosEtapa(){
   const out=[];
   data.lotes.forEach(l=>{
-    const e=etapaDe(l); if(e==='campo') return;      // ya salió del vivero
+    const e=etapaDe(l); if(e==='campo'||e==='perdido') return;   // ya no hay nada en el vivero
     const f=fechaEtapa(l); if(!f) return;            // sin fecha no se puede calcular
     const d=diasDesde(f); if(d===null) return;
-    const req=durEtapa(e);
+    const req=durEtapa(e), est=estadoLote(l);
+    /* lo que quedó de una siembra parcial espera a estar en condiciones */
+    if(est.parcial){ out.push({l,etapa:e,f,dias:d,req,falta:0,listo:false,parcial:true,quedan:est.total}); return; }
     out.push({l,etapa:e,f,dias:d,req,falta:req-d,listo:d>=req});
   });
   return out.sort((a,b)=>b.dias-a.dias);
@@ -2108,7 +2241,9 @@ function renderPaseEtapa(){
   el.innerHTML= todos.length
     ? '<thead><tr><th>Lote</th><th>Clon</th><th>Etapa actual</th><th>Desde</th><th>Días</th><th>Debe durar</th><th>Estado</th><th>Pasa a</th></tr></thead><tbody>'+
       todos.map(x=>{
-        const est = x.listo
+        const est = x.parcial
+          ? `<span class="chip parcial">Siembra parcial · quedan ${x.quedan}</span>`
+          : x.listo
           ? `<span class="chip late">Cumplió · +${x.dias-x.req} d</span>`
           : `<span class="sm">Faltan ${x.falta} d</span>`;
         return `<tr><td><b>${esc(x.l.id||'—')}</b></td><td>${esc(x.l.clon||'—')}</td>
@@ -2167,11 +2302,23 @@ function renderDispo(){
   resumenPlegado(cardDe(el),
     `${(t.tunel+t.ce+t.polis).toLocaleString('es-CO')} plántulas · ${t.tunel} túnel · ${t.ce} endurec. · ${t.polis} polisombra`);
 }
+/* Buscar un clon por su número completo, no por una parte:
+   "3" trae el 3 (y 3M, 3H), pero no 23, 38 ni 63.
+   "21M" trae solo 21M; "4A" trae 4A - M. Un nombre sin número se busca por texto. */
+function coincideClon(clon,q){
+  const limpio=x=>String(x||'').toUpperCase().replace(/CLON/g,'').replace(/[\s\-_.]/g,'');
+  const qq=limpio(q); if(!qq) return true;
+  const cc=limpio(clon);
+  if(/^\d+$/.test(qq)){ const m=cc.match(/^\d+/); return !!m && m[0]===qq; }   // solo número: el clon exacto
+  if(/^\d/.test(qq)) return cc.indexOf(qq)===0;                // número + letras: 21M, 4A...
+  return String(clon||'').toLowerCase().indexOf(String(q).toLowerCase().trim())>-1;  // nombres
+}
 function lotesFiltrados(){
   const q=(document.getElementById('f-clon').value||'').toLowerCase().trim();
   const et=document.getElementById('f-etapa').value, tp=document.getElementById('f-tipo').value, en=document.getElementById('f-ensayo').value;
   return data.lotes.filter(l=>{
-    if(q&&!String(l.clon||'').toLowerCase().includes(q))return false;
+    if(etapaDe(l)==='perdido')return false;          // van al historial
+    if(q&&!coincideClon(l.clon,q))return false;
     if(et&&etapaDe(l)!==et)return false;
     if(tp&&tipoDe(l)!==tp)return false;
     if(en&&String(l.ensayo||'')!==en)return false;
@@ -2195,7 +2342,8 @@ function renderLotes(){
         </td>
         <td><b>Clon ${esc(l.clon)}</b></td>
         <td>${esc(tipoDe(l).replace(' (patrón)',''))}</td>
-        <td><span class="chip ${e}">${ET_LABEL[e]}</span>${atrasado(l)?' <span class="chip late">atrasado</span>':''}</td>
+        <td><span class="chip ${e}">${ET_LABEL[e]}</span>${atrasado(l)?' <span class="chip late">atrasado</span>':''}${
+          (()=>{ const x=estadoLote(l); return x.parcial?` <span class="chip parcial">siembra parcial · quedan ${x.total}</span>`:''; })()}</td>
         <td>${fmtF(l.f_tunel)}</td>`;
       if(hb) f+=`<td>${num(l.b_tunel)||'—'}</td>`;
       if(det){
@@ -2216,6 +2364,31 @@ function renderLotes(){
     ev.stopPropagation(); abrirLote(b.dataset.ledit); }));
   t.querySelectorAll('[data-ldel]').forEach(b=>b.addEventListener('click',ev=>{
     ev.stopPropagation(); borrarLote(b.dataset.ldel); }));
+  renderLotesPerdidos();
+}
+function renderLotesPerdidos(){
+  const t=document.getElementById('perdidos-table'); if(!t) return;
+  const ET={tunel:'Túnel',ce:'Casa de endurecimiento',polis:'Polisombra'};
+  const ps=data.lotes.filter(l=>etapaDe(l)==='perdido').map(l=>{
+    const x=estadoLote(l), c=conteosViv(l).filter(k=>k.f===x.fPerdido && totConteo(k)===0).pop();
+    const d0=l.f_tunel, dur=(d0&&x.fPerdido)?Math.round((new Date(x.fPerdido)-new Date(d0))/864e5):null;
+    return {l,f:x.fPerdido,etapa:c?c.etapa:'',dur};
+  }).sort((a,b)=>String(b.f).localeCompare(String(a.f)));
+  const ini=l=>{ const r=recipEtapa(l,'ini'), tr=totRecip(r);
+    return tr?`${r.bolsa} / ${r.j7c} / ${r.jc}`:(totEtapa(l,'ini')||'—'); };
+  t.innerHTML= ps.length
+    ? '<thead><tr><th></th><th>Clon</th><th>Tipo</th><th>F. túnel</th><th>Iniciales<br><span class="sm">bolsas / J7c / Jc</span></th>'+
+      '<th>Se perdió en</th><th>Fecha</th><th>Duró</th></tr></thead><tbody>'+
+      ps.map(p=>`<tr class="clickrow" data-pid="${esc(p.l.id)}">
+        <td><button class="btn ghost" style="padding:3px 9px;font-size:13px">Ver</button></td>
+        <td><b>Clon ${esc(p.l.clon)}</b></td><td>${esc(tipoDe(p.l).replace(' (patrón)',''))}</td>
+        <td>${fmtF(p.l.f_tunel)}</td><td>${ini(p.l)}</td><td>${ET[p.etapa]||'—'}</td>
+        <td>${fmtF(p.f)}</td><td>${p.dur===null?'—':p.dur+' días'}</td></tr>`).join('')+'</tbody>'
+    : '<tbody><tr><td><div class="empty"><b>Ningún lote perdido</b>Cuando registres un conteo en cero, el lote pasa aquí.</div></td></tr></tbody>';
+  t.querySelectorAll('tr[data-pid]').forEach(tr=>tr.addEventListener('click',()=>abrirLote(tr.dataset.pid)));
+  resumenPlegado(cardDe(t), ps.length
+    ? `${ps.length} lote(s) perdidos · ${ps.reduce((a,p)=>a+(num(totEtapa(p.l,'ini'))||0),0)} plántulas iniciales`
+    : 'Ningún lote perdido');
 }
 
 /* ═══════════ CAMPO: mapa ═══════════ */
@@ -2438,7 +2611,7 @@ function buscarCortes(){
       <td style="color:var(--vareta)">${x.n}</td>
       <td>`+(esBloqueado
         ? `<b style="color:var(--accent)">${x.es>0?x.es:'—'}</b>`
-        : `<input type="number" min="0" data-esrow="${k}" value="${x.es>0?x.es:''}" placeholder="0"
+        : `<input autocomplete="off" type="number" min="0" data-esrow="${k}" value="${x.es>0?x.es:''}" placeholder="0"
            style="width:82px;padding:5px 7px">`)+`</td></tr>`).join('')+
     '</tbody></table></div>'+
     (esBloqueado
@@ -2605,7 +2778,7 @@ function renderEnsCampo(){
   el.querySelectorAll('[data-delec]').forEach(b=>b.addEventListener('click',async()=>{
     const i=+b.dataset.delec, e=data.ensCampo[i];
     if(!confirm('¿Eliminar el ensayo "'+e.nombre+'"? Los puntos quedan sin ensayo asignado.')) return;
-    eachPunto((pt,s,p)=>{ if(pt.ensayo===e.nombre){ pt.ensayo=''; pt.grupo=''; pend.pts[pkey(s,p)]=true; } });
+    eachPunto((pt,s,p)=>{ if(pt.ensayo===e.nombre){ pt.ensayo=''; pt.grupo=''; marcarPend(pkey(s,p),'Quitado del ensayo '+e.nombre); } });
     data.ensCampo.splice(i,1); pend.delEnsC.push(e.nombre);
     await guardarLocal(); flush(); renderAll(); toast('Ensayo eliminado');
   }));
@@ -2734,7 +2907,6 @@ function abrirLote(id){
   const l=data.lotes.find(x=>x.id===id); if(!l)return;
   loteId=id; const e=etapaDe(l), cont=contDe(l);
   document.getElementById('l-title').textContent='Clon '+l.clon;
-  document.getElementById('l-meta').textContent=`${ET_LABEL[e]} · desde ${fmtF(fechaEtapa(l))} · ${diasDesde(fechaEtapa(l))??'—'} días`;
   const set=(k,v)=>document.getElementById(k).value=v==null?'':v;
   set('l-clon',l.clon); set('l-ftunel',l.f_tunel); set('l-epj',l.epj||2);
   const cs=document.getElementById('l-clon-sel');
@@ -2752,14 +2924,18 @@ function abrirLote(id){
   }
   ['lc-j7c','lc-jc','lc-bolsa','lc-nota','lc-f'].forEach(k=>{const e=document.getElementById(k); if(e)e.value='';});
   set('l-btunel',l.b_tunel); set('l-epb',l.epb||1); set('l-fce',l.f_ce); set('l-jce',l.j_ce);
-  set('l-fpolis',l.f_polis); set('l-ppolis',l.p_polis); set('l-fcampo',l.f_campo); set('l-pcampo',l.p_campo);
+  set('l-fpolis',l.f_polis); set('l-ppolis',l.p_polis);
   /* recipientes de cada etapa */
-  ['ce','polis','campo'].forEach(e=>{
+  ['ce','polis'].forEach(e=>{
     const r=recipEtapa(l,e);
     set('l-'+e+'-bolsa', r.bolsa||''); set('l-'+e+'-j7c', r.j7c||''); set('l-'+e+'-jc', r.jc||'');
     pintarInfoEtapa(l,e);
   });
-  set('l-lote',l.lote_destino); set('l-resp',l.resp); set('l-nota',l.nota);
+  set('l-resp',l.resp); set('l-nota',l.nota);
+  ['ls-bolsa','ls-j7c','ls-jc','ls-f'].forEach(k=>set(k,''));
+  /* el conteo arranca en la etapa donde está el lote hoy */
+  const est0=estadoLote(l), ec=document.getElementById('lc-etapa');
+  if(ec && ETAPA_CONTEO_OK.indexOf(est0.etapa)>-1) ec.value=est0.etapa;
   document.getElementById('l-tipo').value=tipoDe(l);
   llenarSelects(); document.getElementById('l-ensayo').value=l.ensayo||'';
   document.getElementById('l-metrics').innerHTML=`
@@ -2767,24 +2943,96 @@ function abrirLote(id){
     <div class="metric"><div class="mv" style="color:var(--endure)">${pctTxt(num(l.p_polis),num(l.j_ce))}</div><div class="ml">Superv. endurecim.</div></div>
     <div class="metric"><div class="mv" style="color:var(--polis)">${pctTxt(num(l.p_campo),num(l.p_polis))}</div><div class="ml">Superv. polisombra</div></div>
     <div class="metric"><div class="mv" style="color:var(--campo)">${pctTxt(num(l.p_campo),cont)}</div><div class="ml">Rendimiento total</div></div>`;
-  listaConteos(l);
+  pintarEstadoFicha(l);
   document.getElementById('loteDrawer').classList.add('open');
   document.getElementById('loteBg').classList.add('open');
 }
+/* Encabezado, conteos y siembras de la ficha, según lo que queda hoy */
+function pintarEstadoFicha(l){
+  const e=etapaDe(l), est=estadoLote(l), m=document.getElementById('l-meta');
+  if(m){
+    if(e==='perdido') m.textContent=`Perdido el ${fmtF(est.fPerdido)} · para reactivarlo, borra el conteo en cero`;
+    else {
+      const fe=fechaEtapa(l);
+      m.textContent=`${ET_LABEL[e]} · desde ${fmtF(fe)} · ${diasDesde(fe)??'—'} días`+
+        (est.parcial?` · siembra parcial: quedan ${est.total} en vivero`:'');
+    }
+  }
+  const inf=document.getElementById('ls-info');
+  if(inf){
+    const rc=est.det?` <span class="sm">(${est.bolsa} bolsas · ${est.j7c} J7c · ${est.jc} Jc)</span>`:'';
+    inf.innerHTML = !est.nSiembras
+      ? (est.total>0 ? `Aún no se ha sembrado nada. En vivero hay <b>${est.total}</b>${rc}.` : 'Aún no se ha sembrado nada de este lote.')
+      : `Sembradas: <b>${est.sembradas}</b> en ${est.nSiembras} siembra(s) · `+
+        (est.total>0 ? `Quedan en vivero: <b>${est.total}</b>${rc}` : 'ya no quedan plántulas en vivero');
+  }
+  listaConteos(l); listaSiembras(l);
+}
+function refrescarTrasCambio(l){
+  pintarEstadoFicha(l); renderViv(); renderLotes(); renderInicio(); renderLog();
+}
 function listaConteos(l){
   const el=document.getElementById('lc-lista'); if(!el) return;
-  const cs=conteosDe(l).slice().sort((a,b)=>String(b.f||'').localeCompare(String(a.f||'')));
+  const cs=conteosViv(l).slice().sort((a,b)=>String(b.f||'').localeCompare(String(a.f||'')));
   const et=k=>(ETAPAS.find(e=>e[0]===k)||[,k])[1];
   el.innerHTML= cs.length
     ? cs.map((c,i)=>`<div class="hist-item"><b>${fmtF(c.f)}</b> · ${et(c.etapa)} — ${totConteo(c)} vivas
-        <span class="sm">(${num(c.j7c)} J7c · ${num(c.jc)} Jc · ${num(c.bolsa)} bolsas)</span>${c.nota?' · '+esc(c.nota):''}
+        <span class="sm">(${ent(c.bolsa)} bolsas · ${ent(c.j7c)} J7c · ${ent(c.jc)} Jc)</span>${c.nota?' · '+esc(c.nota):''}
         <button class="btn ghost" data-delcon="${i}" style="padding:1px 7px;font-size:11px;float:right">✕</button></div>`).join('')
     : '<div class="sinfo">Sin conteos registrados.</div>';
   el.querySelectorAll('[data-delcon]').forEach(b=>b.addEventListener('click',()=>{
     const l2=data.lotes.find(x=>x.id===loteId); if(!l2)return;
-    const c=cs[+b.dataset.delcon];
-    l2.conteos=conteosDe(l2).filter(x=>x!==c);
-    sucioLote(l2.id); listaConteos(l2); renderViv(); toast('Conteo eliminado');
+    const c=cs[+b.dataset.delcon]; if(!c) return;
+    if(!confirm(`¿Borrar este conteo?\n\n${fmtF(c.f)} · ${et(c.etapa)} · ${totConteo(c)} vivas\n`+
+       `(${ent(c.bolsa)} bolsas · ${ent(c.j7c)} J7c · ${ent(c.jc)} Jc)`)) return;
+    const arr=conteosDe(l2), i=arr.indexOf(c);
+    if(i<0){ toast('No se encontró ese conteo',true); return; }
+    arr.splice(i,1);
+    sucioLote(l2.id); logEvent('conteo',null,`Clon ${l2.clon}: conteo del ${fmtF(c.f)} borrado`,'vivero');
+    refrescarTrasCambio(l2); toast('Conteo eliminado');
+  }));
+}
+/* Siembras del lote. Guarda los totales en los campos de siempre para que los
+   reportes (embudo, rendimiento) sigan igual. */
+function sincronizarSiembras(l){
+  const ss=conteosDe(l).filter(esSiembra);
+  if(!ss.length){ l.f_campo=''; l.p_campo=''; l.campo_bolsa=0; l.campo_j7c=0; l.campo_jc=0; return; }
+  const ord=ss.slice().sort((a,b)=>String(a.f||'').localeCompare(String(b.f||'')));
+  l.f_campo=ord[0].f;
+  l.campo_bolsa=ss.reduce((t,c)=>t+ent(c.bolsa),0);
+  l.campo_j7c=ss.reduce((t,c)=>t+ent(c.j7c),0);
+  l.campo_jc=ss.reduce((t,c)=>t+ent(c.jc),0);
+  l.p_campo=ss.reduce((t,c)=>t+totSiembra(c),0);
+  l.lote_destino=ord[ord.length-1].destino||l.lote_destino||'';
+}
+/* los lotes viejos guardaban una sola siembra en sus campos: se pasa a la historia */
+function materializarSiembraVieja(l){
+  const cs=conteosDe(l); if(cs.some(esSiembra)) return;
+  siembrasDe(l).forEach(x=>cs.push({f:x.f,tipo:'siembra',etapa:'campo',bolsa:x.bolsa,j7c:x.j7c,jc:x.jc,
+    total:x.total,destino:x.destino,legado:true}));
+}
+function listaSiembras(l){
+  const el=document.getElementById('ls-lista'); if(!el) return;
+  const ss=siembrasDe(l).slice().sort((a,b)=>String(b.f||'').localeCompare(String(a.f||'')));
+  el.innerHTML= ss.length
+    ? ss.map((c,i)=>`<div class="hist-item"><b>${fmtF(c.f)}</b> · ${totSiembra(c)} sembradas`+
+        ((ent(c.bolsa)+ent(c.j7c)+ent(c.jc))>0?` <span class="sm">(${ent(c.bolsa)} bolsas · ${ent(c.j7c)} J7c · ${ent(c.jc)} Jc)</span>`:'')+
+        (c.destino?` → ${esc(c.destino)}`:'')+
+        `<button class="btn ghost" data-delsi="${i}" style="padding:1px 7px;font-size:11px;float:right">✕</button></div>`).join('')
+    : '';
+  el.querySelectorAll('[data-delsi]').forEach(b=>b.addEventListener('click',()=>{
+    const l2=data.lotes.find(x=>x.id===loteId); if(!l2)return;
+    const c=ss[+b.dataset.delsi]; if(!c) return;
+    if(!confirm(`¿Borrar esta siembra?\n\n${fmtF(c.f)} · ${totSiembra(c)} sembradas${c.destino?' → '+c.destino:''}\n\n`+
+       `Esas plántulas vuelven a contar como disponibles en el vivero.`)) return;
+    materializarSiembraVieja(l2);
+    const arr=conteosDe(l2);
+    let i=arr.indexOf(c);
+    if(i<0) i=arr.findIndex(x=>esSiembra(x)&&x.legado&&x.f===c.f&&totSiembra(x)===totSiembra(c));
+    if(i<0){ toast('No se encontró esa siembra',true); return; }
+    arr.splice(i,1); sincronizarSiembras(l2); sucioLote(l2.id);
+    logEvent('siembra',null,`Clon ${l2.clon}: siembra del ${fmtF(c.f)} borrada`,'vivero');
+    refrescarTrasCambio(l2); toast('Siembra eliminada');
   }));
 }
 function cerrarLote(){ document.getElementById('loteDrawer').classList.remove('open');
@@ -2811,7 +3059,30 @@ document.getElementById('lc-add').addEventListener('click',()=>{
     ? `Clon ${l.clon} · ${et}: lote perdido, 0 vivas (${fmtF(f)})`
     : `Clon ${l.clon} · ${et}: ${j7c+jc+bolsa} vivas (${fmtF(f)})`,'vivero');
   ['lc-j7c','lc-jc','lc-bolsa','lc-nota','lc-f'].forEach(k=>{const e=document.getElementById(k); if(e)e.value='';});
-  listaConteos(l); renderViv(); renderLog(); toast('Conteo registrado');
+  refrescarTrasCambio(l); toast((j7c+jc+bolsa)===0?'Conteo registrado · el lote pasa a Lotes perdidos':'Conteo registrado');
+});
+document.getElementById('ls-f-hoy').addEventListener('click',()=>{ document.getElementById('ls-f').value=today(); });
+document.getElementById('ls-add').addEventListener('click',()=>{
+  const l=data.lotes.find(x=>x.id===loteId); if(!l){ toast('Abre un lote primero',true); return; }
+  const g=k=>document.getElementById(k).value;
+  const bolsa=ent(g('ls-bolsa')), j7c=ent(g('ls-j7c')), jc=ent(g('ls-jc')), tot=bolsa+j7c+jc;
+  if(tot<=0){ toast('Escribe cuántas bolsas y jiffis se sembraron',true); return; }
+  const f=g('ls-f')||today(), antes=estadoLote(l);
+  const sobra = antes.det
+    ? [['bolsas',bolsa,antes.bolsa],['J7c',j7c,antes.j7c],['Jc',jc,antes.jc]].filter(x=>x[1]>x[2])
+    : (tot>antes.total?[['plántulas',tot,antes.total]]:[]);
+  if(sobra.length && !confirm('Vas a sembrar más de lo que hay en el vivero según el último registro:\n\n'+
+      sobra.map(x=>`· ${x[0]}: siembras ${x[1]}, quedan ${x[2]}`).join('\n')+'\n\n¿Registrar de todas formas?')) return;
+  let dest=g('ls-destino');
+  if(dest==='Otro'){ const o=prompt('¿En qué lote se sembró?',''); if(o===null) return; dest=o.trim()||'Otro'; }
+  materializarSiembraVieja(l);
+  conteosDe(l).push({f,tipo:'siembra',etapa:'campo',bolsa,j7c,jc,destino:dest});
+  sincronizarSiembras(l); sucioLote(l.id);
+  const desp=estadoLote(l);
+  logEvent('siembra',null,`Clon ${l.clon}: ${tot} sembradas en ${dest} (${fmtF(f)}) · quedan ${desp.total} en vivero`,'vivero');
+  ['ls-bolsa','ls-j7c','ls-jc','ls-f'].forEach(k=>document.getElementById(k).value='');
+  refrescarTrasCambio(l);
+  toast(desp.total>0?`Siembra registrada · quedan ${desp.total} en vivero`:'Siembra registrada · ya no quedan plántulas en vivero');
 });
 document.getElementById('l-save').addEventListener('click',async()=>{
   const l=data.lotes.find(x=>x.id===loteId); if(!l)return;
@@ -2823,10 +3094,10 @@ document.getElementById('l-save').addEventListener('click',async()=>{
   else if(tieneDetalleJ(l)){ l.ini_j7c=0; l.ini_jc=0; l.j_tunel=0; }
   /* si es un lote viejo sin detalle y no escribió nada, se conserva su total */
   l.b_tunel=num(g('l-btunel')); l.epb=num(g('l-epb'))||1;
-  l.f_ce=g('l-fce'); l.f_polis=g('l-fpolis'); l.f_campo=g('l-fcampo');
+  l.f_ce=g('l-fce'); l.f_polis=g('l-fpolis');   /* la siembra se registra aparte */
   /* recipientes por etapa; si hay detalle, el total se recalcula solo */
-  const totCampoDe={ce:'l-jce', polis:'l-ppolis', campo:'l-pcampo'};
-  ['ce','polis','campo'].forEach(e=>{
+  const totCampoDe={ce:'l-jce', polis:'l-ppolis'};
+  ['ce','polis'].forEach(e=>{
     const k=ETAPA_KEYS[e];
     const b=num(g('l-'+e+'-bolsa')), s7=num(g('l-'+e+'-j7c')), sc=num(g('l-'+e+'-jc'));
     /* ¿escribió algo, aunque sea 0? Un 0 escrito es un dato, no un campo vacío */
@@ -2836,7 +3107,7 @@ document.getElementById('l-save').addEventListener('click',async()=>{
     if(escribio){ l[k[0]]=b; l[k[1]]=s7; l[k[2]]=sc; l[tot]=b+s7+sc; }
     else { l[k[0]]=0; l[k[1]]=0; l[k[2]]=0; l[tot]= suelto===''?'':num(suelto); }
   });
-  l.lote_destino=g('l-lote').trim(); l.resp=g('l-resp').trim();
+  l.resp=g('l-resp').trim();
   l.ensayo=g('l-ensayo'); l.nota=g('l-nota').trim();
   sucioLote(l.id); renderAll(); cerrarLote(); toast('Cambios guardados');
 });
@@ -2854,13 +3125,13 @@ async function borrarLote(id){
   toast('Lote borrado');
 }
 /* al escribir un recipiente, actualizar el total y el aviso */
-['ce','polis','campo'].forEach(e=>{
+['ce','polis'].forEach(e=>{
   ['bolsa','j7c','jc'].forEach(k=>{
     const el=document.getElementById('l-'+e+'-'+k);
     if(el) el.addEventListener('input',()=>{
       const g=id=>(document.getElementById(id)||{}).value||'';
       const t=num(g('l-'+e+'-bolsa'))+num(g('l-'+e+'-j7c'))+num(g('l-'+e+'-jc'));
-      const tot=document.getElementById({ce:'l-jce',polis:'l-ppolis',campo:'l-pcampo'}[e]);
+      const tot=document.getElementById({ce:'l-jce',polis:'l-ppolis'}[e]);
       if(tot && t>0) tot.value=t;
       const l=data.lotes.find(x=>x.id===loteId);
       if(l) pintarInfoEtapa(l,e);
@@ -2901,7 +3172,7 @@ document.getElementById('ev-semcampo').addEventListener('input',syncSemanas);
 function renderCrit(){
   const el=document.getElementById('crit-list');
   el.innerHTML=critDraft.map((c,i)=>`<div class="crit-row">
-    <input type="text" value="${esc(c.nombre)}" data-ci="${i}" data-cf="nombre" placeholder="Criterio">
+    <input autocomplete="off" type="text" value="${esc(c.nombre)}" data-ci="${i}" data-cf="nombre" placeholder="Criterio">
     <select data-ci="${i}" data-cf="tipo">${TIPOS_CRIT.map(t=>`<option${t===c.tipo?' selected':''}>${t}</option>`).join('')}</select>
     <select data-ci="${i}" data-cf="mejor"><option value="mayor"${c.mejor==='mayor'?' selected':''}>Mayor es mejor</option>
       <option value="menor"${c.mejor==='menor'?' selected':''}>Menor es mejor</option></select>
@@ -3041,8 +3312,8 @@ function abrirSeguimiento(i){
   document.getElementById('ens-trat').innerHTML=(e.tratamientos||[]).map(t=>`<option>${esc(t)}</option>`).join('')||'<option value="">(sin tratamientos)</option>';
   document.getElementById('ens-valores').innerHTML=(e.criterios||[]).map(c=>{
     if(c.tipo==='Sí/No') return `<div class="field"><label>${esc(c.nombre)}</label><select data-cv="${esc(c.nombre)}"><option value="">—</option><option>Sí</option><option>No</option></select></div>`;
-    if(c.tipo==='Escala 1-5') return `<div class="field"><label>${esc(c.nombre)} (1 a 5)</label><input type="number" min="1" max="5" data-cv="${esc(c.nombre)}"></div>`;
-    return `<div class="field"><label>${esc(c.nombre)}${c.tipo==='Porcentaje'?' (%)':''}</label><input type="number" step="0.1" data-cv="${esc(c.nombre)}"></div>`;
+    if(c.tipo==='Escala 1-5') return `<div class="field"><label>${esc(c.nombre)} (1 a 5)</label><input autocomplete="off" type="number" min="1" max="5" data-cv="${esc(c.nombre)}"></div>`;
+    return `<div class="field"><label>${esc(c.nombre)}${c.tipo==='Porcentaje'?' (%)':''}</label><input autocomplete="off" type="number" step="0.1" data-cv="${esc(c.nombre)}"></div>`;
   }).join('')||'<div class="sinfo" style="margin-bottom:10px">Este ensayo no tiene criterios definidos.</div>';
   document.getElementById('ens-fecha').value=''; document.getElementById('ens-obs').value='';
   renderRevs(e); renderResultado(e);
@@ -3230,6 +3501,9 @@ function guardarUndo(id){
 }
 function deshacer(){
   const u=undoStack.pop(); if(!u)return;
+  /* si al deshacer el punto queda "en blanco", se deja constancia en su historial;
+     sin eso la base no aceptaría el cambio (protección contra borrados) */
+  if(puntoEnBlanco(serPunto(u.id,u.antes))) u.antes.hist=[{ts:nowStamp(),txt:'Cambio deshecho'}];
   data.puntos[u.id]=u.antes; sucioPunto(u.id);
   const [s,p]=u.id.split('-').map(Number);
   logEvent('ajuste',etiqPunto(s,p),'Cambio deshecho');
@@ -3651,7 +3925,7 @@ document.getElementById('ec-add').addEventListener('click',async()=>{
     // si cambió el nombre, hay que borrar la fila vieja de la hoja
     if(ecEditando!==nombre){ pend.delEnsC.push(ecEditando); delete pend.ensC[ecEditando]; }
     // suelta las marcas anteriores; enseguida se aplican las nuevas
-    eachPunto((pt,s,p)=>{ if(pt.ensayo===ecEditando){ pt.ensayo=''; pt.grupo=''; pend.pts[pkey(s,p)]=true; } });
+    eachPunto((pt,s,p)=>{ if(pt.ensayo===ecEditando){ pt.ensayo=''; pt.grupo=''; marcarPend(pkey(s,p),'Quitado del ensayo '+ecEditando); } });
   } else {
     e={obs:[],inicio:null,fin:null,conclusion:'',creado:nowStamp()};
     data.ensCampo.unshift(e);
@@ -3748,11 +4022,11 @@ function renderSurcoList(){
     const libres=(+su.total||0)-usados.size;
     return `<div class="sbox"><div class="sboxhead"><b>Surco ${su.n}</b>
       <span class="sinfo">${su.total} puntos${libres>0?` · ${libres} sin clon`:''}</span><span style="flex:1"></span>
-      <input type="number" min="0" data-stot="${i}" value="${su.total}" style="width:72px" title="Puntos del surco">
+      <input autocomplete="off" type="number" min="0" data-stot="${i}" value="${su.total}" style="width:72px" title="Puntos del surco">
       <button class="btn ghost" data-sdel="${i}">✕</button></div>
       ${(su.asign||[]).map((a,j)=>`<div class="arow">
-        <input type="text" data-si="${i}" data-aj="${j}" data-af="clon" value="${esc(a.clon)}" placeholder="Clon">
-        <input type="text" data-si="${i}" data-aj="${j}" data-af="r" value="${esc(a.r)}" placeholder="1-13 o 5-8,19,21">
+        <input autocomplete="off" type="text" data-si="${i}" data-aj="${j}" data-af="clon" value="${esc(a.clon)}" placeholder="Clon">
+        <input autocomplete="off" type="text" data-si="${i}" data-aj="${j}" data-af="r" value="${esc(a.r)}" placeholder="1-13 o 5-8,19,21">
         <span class="sinfo">${parseRango(a.r).filter(p=>p>=1&&p<=su.total).length} pts</span>
         <button class="btn ghost" data-adel="${i}-${j}">✕</button></div>`).join('')}
       <button class="btn ghost" data-aadd="${i}" style="margin-top:5px;padding:5px 11px;font-size:12px">+ Agregar clon a este surco</button></div>`;
@@ -3777,7 +4051,7 @@ document.getElementById('add-surco').addEventListener('click',()=>{
 function renderColorGrid(){
   const et=[['desarrollo','En desarrollo'],['viva','Sembrada'],['resem','Resembrada'],['muerta','Muerta'],['vacia','Sin sembrar']];
   document.getElementById('color-grid').innerHTML=et.map(([k,l])=>
-    `<div><label>${l}</label><input type="color" data-col="${k}" value="${cfgTmp.colores[k]||'#3fa64a'}"></div>`).join('');
+    `<div><label>${l}</label><input autocomplete="off" type="color" data-col="${k}" value="${cfgTmp.colores[k]||'#3fa64a'}"></div>`).join('');
   document.querySelectorAll('[data-col]').forEach(i=>i.addEventListener('input',e=>{ cfgTmp.colores[e.target.dataset.col]=e.target.value; }));
 }
 document.getElementById('cfg-pt').addEventListener('input',e=>{
@@ -3854,7 +4128,8 @@ document.getElementById('btn-todas-des').addEventListener('click',()=>{
   const det=Object.keys(porClon).map(c=>`  · ${c==='sin clon'?c:'Clon '+c}: ${porClon[c]}`).join('\n');
   if(!confirm(`¿Marcar ${ids.length} planta(s) viva(s) como "en desarrollo"?\n\n${det}\n\n`+
       `Quedarán en verde en el mapa. Los totales de vivas y la supervivencia no cambian.`)) return;
-  ids.forEach(id=>{ data.puntos[id].estado='desarrollo'; pend.pts[id]=true; });
+  ids.forEach(id=>{ const pt=data.puntos[id]; pt.estado='desarrollo';
+    pt.hist=[{ts:nowStamp(),txt:'Cambio de estado: Viva → En desarrollo'}].concat(pt.hist||[]); pend.pts[id]=true; });
   logEvent('estado',null,`${ids.length} planta(s) viva(s) pasaron a "en desarrollo"`);
   guardarLocal(); flush(); renderAll();
   toast(`${ids.length} plantas quedaron en verde`);
@@ -3980,7 +4255,7 @@ function repViv(tipo){
     const m={};
     data.lotes.forEach(l=>{const tp=tipoDe(l); m[tp]=m[tp]||{tipo:tp,lotes:0,cont:0,jiffis:0,bolsas:0,jCE:0,pCampo:0,proc:0};
       m[tp].lotes++; m[tp].cont+=contDe(l); m[tp].jiffis+=num(l.j_tunel); m[tp].bolsas+=num(l.b_tunel);
-      m[tp].jCE+=num(l.j_ce); m[tp].pCampo+=num(l.p_campo); if(etapaDe(l)!=='campo')m[tp].proc++;});
+      m[tp].jCE+=num(l.j_ce); m[tp].pCampo+=num(l.p_campo); if(enVivero(l))m[tp].proc++;});
     return {titulo:'Producción por tipo de material',meta,kpis:[],
       tablas:[{cols:['Tipo','Lotes','En proceso','Jiffis','Bolsas','Contenedores','% prend.','A campo','% total'],
         rows:Object.values(m).sort((a,b)=>b.cont-a.cont).map(r=>[r.tipo,r.lotes,r.proc,r.jiffis,r.bolsas,r.cont,
@@ -4030,8 +4305,8 @@ function repViv(tipo){
          c.pCampo,pctTxt(c.pCampo,c.pPolis),pctTxt(c.pCampo,c.cont)])}]};
   if(tipo==='lotes'||tipo==='proceso'||tipo==='campo'){
     let ls=data.lotes.slice();
-    if(tipo==='proceso') ls=ls.filter(l=>etapaDe(l)!=='campo');
-    if(tipo==='campo') ls=ls.filter(l=>etapaDe(l)==='campo');
+    if(tipo==='proceso') ls=ls.filter(enVivero);
+    if(tipo==='campo') ls=ls.filter(l=>siembrasDe(l).length>0);
     ls.sort((a,b)=>String(b.f_tunel||'').localeCompare(String(a.f_tunel||'')));
     const tit={lotes:'Todos los lotes',proceso:'Lotes en proceso',campo:'Lotes sembrados en campo'}[tipo];
     return {titulo:tit,meta,
